@@ -1,0 +1,27 @@
+# directories
+pdf/
+obrazky/
+logo/
+
+# files
+*.aux
+*.lof
+*.lol
+*.lot
+*.tps
+*.tcp
+*.toa
+*.synctex
+*.pdf
+*.tcp
+*.nav
+*.out
+*.enc
+*.tmp
+*.tfm
+*.fd
+*.vf
+*.map
+*.pfb
+*.snm
+/*.log
