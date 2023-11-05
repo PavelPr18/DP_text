@@ -4,8 +4,8 @@
 %  draft,    				  % Testovací překlad
   12pt,       				% Velikost základního písma je 12 bodů
   a4paper,    				% Formát papíru je A4
-  %oneside,      			% Jednostranný tisk
-	twoside,      			% Dvoustranný tisk (kapitoly a další důležité části tedy začínají na lichých stranách)
+  oneside,      			% Jednostranný tisk
+	%twoside,      			% Dvoustranný tisk (kapitoly a další důležité části tedy začínají na lichých stranách)
 	unicode,						% Záložky a metainformace ve výsledném  PDF budou v kódování unicode
 ]{report}				    	% Dokument třídy 'zpráva', vhodná pro sazbu závěrečných prací s kapitolami
 
@@ -128,7 +128,13 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \pdfmapfile{=vafle.map}
-
+% pridane balicky
+\usepackage{array}		% hodí se pro změnu tloušťky tabulek
+\newcolumntype{P}[1]{>{\centering\arraybackslash}p{#1}}	% nový typ sloupce odstavcový centrovaný horizontalne
+\newcolumntype{M}[1]{>{\centering\arraybackslash}m{#1}}	% nový typ sloupce odstavcový centrovaný i vetikálně
+%\usepackage{amsmath}	% dalsi matematika (např.: prostredi split)
+\usepackage{placeins} % prikaz \FloatBarrier (nedovoli obrazky presunout do jine sekce)
+\usepackage{float}		% [H] u obrazku/tabulek
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%       Začátek dokumentu               %%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -136,8 +142,8 @@
 \pagestyle{empty} %vypnutí číslování stránek
 
 %%% Vložení desek -- od září 2021 na žádost fakulty nepoužíváno
-%\includepdf[pages=1]%  buďto generovaných informačním systémem
-  %{pdf/student-desky}% název souboru nesmí obsahovat mezery!
+\includepdf[pages=1]%  buďto generovaných informačním systémem
+	{pdf/desky}% název souboru nesmí obsahovat mezery!
 %%% NEBO vytvoření desek z balíčku
 %%\makecover
 %%%
@@ -147,7 +153,7 @@
 
 %% Vložení titulního listu
 \includepdf[pages=1]%    buďto generovaného informačním systémem
-  {pdf/student-titulka}% název souboru nesmí obsahovat mezery!
+  {pdf/TitulniList_color}% název souboru nesmí obsahovat mezery!
 %% NEBO vytvoření titulní stránky z balíčku
 %\maketitle
 %%
@@ -155,7 +161,7 @@
    
 %% Vložení zadání
 \includepdf[pages=1]%   buďto generovaného informačním systémem
-  {pdf/student-zadani}% název souboru nesmí obsahovat mezery!
+  {pdf/zadani_sem}% název souboru nesmí obsahovat mezery!
 %% NEBO lze vytvořit prázdný list příkazem ze šablony
 %\patternpage{}%
 %	{\sffamily\Huge\centering ZDE VLOŽIT LIST ZADÁNÍ}%
@@ -169,7 +175,7 @@
 % Vysázení stránky s rozšířeným abstraktem
 % (pokud píšete práci v češtině či slovenštině, vložení rozšířeného abstraktu zrušte;
 %  pro semestrální projekt také není potřeba rozšířený abstrakt uvádět)
-\input{text/rozsireny_abstrakt}
+%\input{text/rozsireny_abstrakt}
 
 %%% Vysázení citace práce
 \makecitation
@@ -193,7 +199,7 @@
 
 %%% Vysázení seznamu výpisů kódu
 % (vynechejte, pokud máte dva nebo méně výpisů)
-\lstlistoflistingss
+%\lstlistoflistingss
 
 \cleardoublepage\pagestyle{plain}   % zapnutí číslování stránek
 
@@ -201,16 +207,25 @@
 %%% Vložení souboru 'text/uvod.tex' s úvodem
 \include{text/uvod}
 
+%Vlozeni souboru s prvni kapitolou (JTAG rozhraní rpo RISC-V degugování)
+\include{text/jtag_riscv}
+
+%Vlozeni souboru s druhou kapitolou (JTAG rozhraní rpo RISC-V degugování)
+\include{text/jtag_2w}
+
+%Vlozeni souboru s třetí kapitolou (JTAG rozhraní rpo RISC-V degugování)
+\include{text/jtag_ap}
+
 %%% Vložení souboru 'text/cile.tex' s úvodem
-\include{text/cile}
+%\include{text/cile}
 
 %%% Vložení souboru 'text/reseni' s popisem řešení práce
 % (rozdělte na více souborů či kapitol, pokud je vhodné)
-\include{text/reseni}
+%\include{text/reseni}
 
 %%% Vložení souboru 'text/vysledky' s popisem vysledků práce
 % (rozdělte na více souborů či kapitol, pokud je vhodné)
-\include{text/vysledky}
+%\include{text/vysledky}
 
 %%% Vložení souboru 'text/zaver' se závěrem
 \include{text/zaver}

@@ -1,0 +1,50 @@
+\chapter{Návrh a implementace rozšiřujícího modulu pro přístup na systémovou sběrnici pomocí JTAG protokolu}
+Pro přístup na systémovou sběrnici procesoru jsou navrženy dvě varianty komunikačního protokolu přenášeného pomocí JTAG rozhraní.
+
+\section{Systémová sběrnice PULP RICS-V}
+Jako procesorové jádro je v integrovaném obvodu, pro který je rozšíření JTAG front-endu navrženo, použito procesorové jádro typu \acs{RISC-V}. Konkrétní typ procesorového jádra je použit \acs{PULP} \acl{PULP} RI5CY 32-bitový procesor. Systémová sběrnice tohoto procesorového jádra je založena na jednoduchém \textbf{Request-Grant} protokolu. Na sběrnici mohou být obecně připojeni \textit{master} a \textit{slave} moduly. V tomto případě bude uvažován jako master modul navržený modul rozšiřující JTAG front-end a jako slave například paměť.
+
+\subsection{Signály systémové sběrnice}
+
+
+\begin{table}[!h]
+	\FloatBarrier
+  \caption{Tabulka popisu signálů systémové sběrnice PULP RICS-V.}
+  \begin{center}
+  	\small
+	  \begin{tabular}{!{\vrule width 1.2pt}M{2.2cm}|M{1.5cm}|M{1.8cm}|M{6.5cm}!{\vrule width 1.2pt}}
+	    \noalign{\hrule height 1.2pt}
+	    Název signálu & Označení signálu & Počet bitů & Význam signálu\\
+	    \noalign{\hrule height 1.2pt}
+	    Address & addr & 32 & Adresa registru ke kterému se bude přistupovat\\
+			\hline
+			Write data & wdata & 32 & Data zapisovaná do registru dle adresy\\
+			\hline
+			Request & req & 1 & Požadavek přístupu na sběrnici\\
+			\hline
+			Grant & gnt & 1 & Potvrzení schopnosti obsloužit požadavek od slave modulu\\
+			\hline			
+			Read data valid & rvalid & 1 & Potvrzení platnosti čtených dat\\
+			\hline
+			Read data & rdata & 32 & Data čtená z registru dle adresy\\
+			\hline
+			Write enable & we & 1 & Určuje zápis(log. 1)/čtení(log. 0)\\
+			\hline
+			Byte enable & be & 4 & Vybírá bajty, které budou zapsány\\
+			\hline
+			\noalign{\hrule height 1.2pt}
+		\end{tabular}
+  \end{center}
+	\label{tab:ri5cy_bus}
+\end{table}
+
+\subsection{Průběh přístupu na systémovou sběrnici}
+Obecný průběh přístupu na systémovou sběrnici je zobrazen na obrázku \ref{fig:ri5cy_bus_basic}. Pokud chce master modul přistoupit na sběrnici vystaví adresu na \textit{data\_addr\_o}, nastaví signály \textit{data\_we\_o}, \textit{data\_be\_o}, v případě zápisu vystaví také zapisovaná data \textit{data\_wdata\_o} a nastaví request \textit{data\_req\_o} na hodnotu log. 1. Jakmile je slave modu připravený obsloužit požadavek nastaví \textit{data\_gnt\_i} na hodnotu log. 1. Po přijetí gnt může master v dalším taktu adresu, data a signály \textit{data\_we\_o}, \textit{data\_be\_o} změnit. Slave také nastaví signál \textit{data\_rvalid\_i} na hodnotu log. 1 jeden nebo více taktů po nastavení signálu \textit{data\_gnt\_i}. V případě čtení má signál \textit{data\_rvalid\_i} význam platnosti čtených dat, které jsou vystaveny na \textit{data\_rdata\_i}. V případě zápisu musí být signál \textit{data\_rvalid\_i} nastaven také, i když čtená data nemají žádný význam.
+
+\begin{figure}[!h]
+  \begin{center}
+    \includegraphics[scale=0.65]{obrazky/ri5cy_bus_basic.png}
+  \end{center}
+  \caption{Základní sekvence přístupu na systémovou sběrnici \cite{ri5cy}}
+	\label{fig:ri5cy_bus_basic}
+\end{figure}
