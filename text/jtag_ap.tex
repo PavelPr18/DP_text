@@ -2,17 +2,17 @@
 Pro přístup na systémovou sběrnici procesoru jsou navrženy dvě varianty komunikačního protokolu přenášeného pomocí JTAG rozhraní.
 
 \section{Systémová sběrnice PULP RICS-V}
-Jako procesorové jádro je v integrovaném obvodu, pro který je rozšíření JTAG front-endu navrženo, použito procesorové jádro typu \acs{RISC-V}. Konkrétní typ procesorového jádra je použit \acs{PULP} \acl{PULP} RI5CY 32-bitový procesor. Systémová sběrnice tohoto procesorového jádra je založena na jednoduchém \textbf{Request-Grant} protokolu. Na sběrnici mohou být obecně připojeni \textit{master} a \textit{slave} moduly. V tomto případě bude uvažován jako master modul navržený modul rozšiřující JTAG front-end a jako slave například paměť.
+Jako procesorové jádro je v integrovaném obvodu, pro který je rozšíření JTAG front-endu navrženo, použito procesorové jádro typu \acs{RISC-V}. Konkrétní typ procesorového jádra je použit \acs{PULP} (\acl{PULP}) RI5CY 32-bitový procesor. Systémová sběrnice tohoto procesorového jádra je založena na jednoduchém \textbf{Request-Grant} protokolu. Na sběrnici mohou být obecně připojeni \textit{master} a \textit{slave} moduly. V tomto případě bude uvažován jako master modul navržený modul rozšiřující JTAG front-end a jako slave například paměť.
 
 \subsection{Signály systémové sběrnice}
-
+V tabulce \ref{tab:ri5cy_bus} jsou popsány jednotlivé signály systémové sběrnice procesory PULP RICS-V.
 
 \begin{table}[!h]
 	\FloatBarrier
-  \caption{Tabulka popisu signálů systémové sběrnice PULP RICS-V.}
+  \caption{Tabulka popisu signálů systémové sběrnice PULP RICS-V. \cite{ri5cy}}
   \begin{center}
   	\small
-	  \begin{tabular}{!{\vrule width 1.2pt}M{2.2cm}|M{1.5cm}|M{1.8cm}|M{6.5cm}!{\vrule width 1.2pt}}
+	  \begin{tabular}{!{\vrule width 1.2pt}M{2.2cm}|M{1.5cm}|M{1.8cm}|M{7cm}!{\vrule width 1.2pt}}
 	    \noalign{\hrule height 1.2pt}
 	    Název signálu & Označení signálu & Počet bitů & Význam signálu\\
 	    \noalign{\hrule height 1.2pt}
@@ -22,7 +22,7 @@ Jako procesorové jádro je v integrovaném obvodu, pro který je rozšíření 
 			\hline
 			Request & req & 1 & Požadavek přístupu na sběrnici\\
 			\hline
-			Grant & gnt & 1 & Potvrzení schopnosti obsloužit požadavek od slave modulu\\
+			Grant & gnt & 1 & Potvrzení příjmu požadavek přístupu na sběrnici\\
 			\hline			
 			Read data valid & rvalid & 1 & Potvrzení platnosti čtených dat\\
 			\hline
@@ -30,7 +30,7 @@ Jako procesorové jádro je v integrovaném obvodu, pro který je rozšíření 
 			\hline
 			Write enable & we & 1 & Určuje zápis(log. 1)/čtení(log. 0)\\
 			\hline
-			Byte enable & be & 4 & Vybírá bajty, které budou zapsány\\
+			Byte enable & be & 4 & Vybírá bajty, které budou zapsány/čteny\\
 			\hline
 			\noalign{\hrule height 1.2pt}
 		\end{tabular}
@@ -39,7 +39,7 @@ Jako procesorové jádro je v integrovaném obvodu, pro který je rozšíření 
 \end{table}
 
 \subsection{Průběh přístupu na systémovou sběrnici}
-Obecný průběh přístupu na systémovou sběrnici je zobrazen na obrázku \ref{fig:ri5cy_bus_basic}. Pokud chce master modul přistoupit na sběrnici vystaví adresu na \textit{data\_addr\_o}, nastaví signály \textit{data\_we\_o}, \textit{data\_be\_o}, v případě zápisu vystaví také zapisovaná data \textit{data\_wdata\_o} a nastaví request \textit{data\_req\_o} na hodnotu log. 1. Jakmile je slave modu připravený obsloužit požadavek nastaví \textit{data\_gnt\_i} na hodnotu log. 1. Po přijetí gnt může master v dalším taktu adresu, data a signály \textit{data\_we\_o}, \textit{data\_be\_o} změnit. Slave také nastaví signál \textit{data\_rvalid\_i} na hodnotu log. 1 jeden nebo více taktů po nastavení signálu \textit{data\_gnt\_i}. V případě čtení má signál \textit{data\_rvalid\_i} význam platnosti čtených dat, které jsou vystaveny na \textit{data\_rdata\_i}. V případě zápisu musí být signál \textit{data\_rvalid\_i} nastaven také, i když čtená data nemají žádný význam.
+Obecný průběh přístupu na systémovou sběrnici je zobrazen na obrázku \ref{fig:ri5cy_bus_basic}. Pokud chce master modul přistoupit na sběrnici vystaví adresu na \textit{data\_addr\_o}, nastaví signály \textit{data\_we\_o}, \textit{data\_be\_o}, v případě zápisu vystaví také zapisovaná data \textit{data\_wdata\_o} a nastaví request \textit{data\_req\_o} na hodnotu log. 1. Jakmile je slave modu připravený obsloužit požadavek nastaví \textit{data\_gnt\_i} na hodnotu log. 1. Po přijetí gnt může master v dalším taktu adresu, data a signály \textit{data\_we\_o}, \textit{data\_be\_o} změnit. Slave také nastaví signál \textit{data\_rvalid\_i} na hodnotu log. 1 jeden nebo více taktů po nastavení signálu \textit{data\_gnt\_i}. V případě čtení má signál \textit{data\_rvalid\_i} význam platnosti čtených dat, které jsou vystaveny na \textit{data\_rdata\_i}. V případě zápisu musí být signál \textit{data\_rvalid\_i} nastaven také, i když čtená data nemají žádný význam. \cite{ri5cy}
 
 \begin{figure}[!h]
   \begin{center}
@@ -48,3 +48,79 @@ Obecný průběh přístupu na systémovou sběrnici je zobrazen na obrázku \re
   \caption{Základní sekvence přístupu na systémovou sběrnici \cite{ri5cy}}
 	\label{fig:ri5cy_bus_basic}
 \end{figure}
+
+\section{Návrh časově optimalizovaného protokolu pro přístup na systémovou sběrnici}	\label{sec:protokoly}
+Pro přístup na systémovou sběrnici byly navrženy dvě varianty protokolu využívajícího JTAG protokolu. Obě varianty se od sebe liší především, ve způsobu signalizace nepřístupnosti systémové sběrnice z důvodu probíhající operace na sběrnici. První variantou je využití obdobného principu jako u stávajícího řešení. Tedy pokud se operace na systémovou sběrnici nestihne provést do okamžiku dalšího požadavku, je skrze JTAG komunikaci odeslán zpět status \textbf{Busy}. Druhou variantou je využití výstupního \acs{TDO} portu k signalizaci dokončení operace na systémové sběrnici dynamicky.
+
+\subsection{Zkrácení adresy a přenášených dat}
+V případě obou variant protokolu je adresa zkrácena na 21 bitů namísto původních 32 bitů. Důvodem pro zkrácení adresy je velikost adresního prostoru celého systému, ve kterém není využito 11 bitů z adresy. Z tohoto důvodu je výhodné nevyužívané bity adresy neodesílat a adresu korektně rozšířit na původních 32-bitů až po jejím příjmu. Tato optimalizace ušetří 11 taktů testovacího hodinového signálu \acs{TCK} pro každý přístup na sběrnici. V případě většího adresního prostoru systému by se pouze odesílaná adresa rozšířila.
+
+Délka přenášených dat může být volena jako \textbf{Word} (32-bitů), \textbf{Half-Word} (16-bitů) a \textbf{Byte} (8-bitů). Obvyklým způsobem je přístup na sběrnici v celé šířce 32 bitů. Nicméně, pro specifické požadavky je možné využít také kratších variant. Příkladem může být    . Délka přenesených dat je dekódována podle adresy na signál \textit{be} systémové sběrnice.
+
+\subsection{Busy-wait mód} \label{subsec:busy-wait}
+Varianta protokolu \textbf{Busy-wait} je založena na principu signalizace probíhající operace na sběrnici před odesíláním požadovaných dat. Tato informace je předávána debuggeru jako 3-bitová hodnota \textit{status}, prostřednictvím signálu \acs{TDO}. \textit{Status} může nabývat hodnot dle tabulky \ref{tab:status_vals}, kde je vidět že je využitý pouze jeden bit ze tří. Důvodem je to, že pole \textit{status} je vysíláno současně s hodnotou \textit{op}, která je vysílána debuggerem a ta již 3-bitová být musí. Význam hodnot \textit{op} (operace) je popsán v tabulce \ref{tab:op_vals}. Výběr zda bude následovat zápis nebo čtení je určen nejnižším bitem pole \textit{op}, kde hodnota log. 0 určuje čtení a log. 1 zápis, což je shodné z významem signálu \textit{we} systémové sběrnice popsaného v tabulce \ref{tab:ri5cy_bus}. Hodnota \textit{op} určuje také délku přenášených dat, kterou je tak tedy možné kdykoliv změnit.
+
+
+\begin{table}[!h]
+  \caption{Tabulka status hodnot.}
+  \begin{center}
+  	\small
+	  \begin{tabular}{!{\vrule width 1.2pt}M{1.5cm}|M{1.8cm}|M{9cm}!{\vrule width 1.2pt}}
+	    \noalign{\hrule height 1.2pt}
+	    Status & Význam & Popis\\
+	    \noalign{\hrule height 1.2pt}
+	    0 & no\_error & Systémová sběrnice je připravena k přístupu\\
+			\hline
+			1 & busy & Na systémové sběrnici probíhá komunikace\\
+			\hline
+			2 - 7 & res & Rezervováno pro budoucí využití\\
+			\hline
+			\noalign{\hrule height 1.2pt}
+		\end{tabular}
+  \end{center}
+	\label{tab:status_vals}
+\end{table}
+
+
+\begin{table}[!h]
+  \caption{Tabulka možných hodnot operace.}
+  \begin{center}
+  	\small
+	  \begin{tabular}{!{\vrule width 1.2pt}M{1.5cm}|M{2.5cm}|M{9cm}!{\vrule width 1.2pt}}
+	    \noalign{\hrule height 1.2pt}
+	    op & Význam & Popis\\
+	    \noalign{\hrule height 1.2pt}
+	    0 & byte / R & Čtení bajtu (následuje odesílání adresy)\\
+			\hline	    
+			1 & byte / W & Zápis bajtu (následuje odesílání adresy a zapisovaných dat)\\
+			\hline
+			2 & half-word / R & Čtení půlslova (následuje odesílání adresy)\\
+			\hline	    
+			3 & half-word / W & Zápis půlslova (následuje odesílání adresy a zapisovaných dat)\\
+			\hline
+			4 & word / R & Čtení slova (následuje odesílání adresy)\\
+			\hline	   
+			5 & word / W & Zápis slova (následuje odesílání adresy a zapisovaných dat)\\
+			\hline
+			6 & data & Uvozuje přenos vyčtených dat)\\
+			\hline
+			7 & cmd & Uvozuje změnu módu\\
+			\hline
+			\noalign{\hrule height 1.2pt}
+		\end{tabular}
+  \end{center}
+	\label{tab:op_vals}
+\end{table}
+
+Průběh JTAG komunikace pro zápis na systémovou sběrnici je zobrazen na obrázku \ref{fig:busy_w}. Po přechodu do stavu \textit{Shift-DR} je nejdříve odeslána 3-bitová hodnota \textit{op}, která může v případě zápisu nabývat hodnot 1, 3 a 5, podle délky zapisovaných dat. Následuje odesílání 21-bitové adresy, na kterou se budou data zapisovat. Po odeslání adresy následuje přenos požadovaných dat k zápisu, jejichž délka je určena hodnotou polem \textit{op}. 
+
+\begin{figure}[!h]
+  \begin{center}
+    \includegraphics[scale=0.60]{obrazky/busy_w.pdf}
+  \end{center}
+  \caption{Průběh zápisu na systémovou sběrnici v Busy-wait módu.}
+	\label{fig:busy_w}
+\end{figure}
+
+
+\subsection{Dynamic-wait mód}	\label{subsec:dyn-wait}

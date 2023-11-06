@@ -6,19 +6,17 @@
 \contentsline {chapter}{\numberline {1}Komunikační protokol JTAG}{12}{chapter.8}%
 \contentsline {section}{\numberline {1.1}Základní popis}{12}{section.9}%
 \contentsline {section}{\numberline {1.2}Stavový automat dle IEEE 1149.1}{12}{section.10}%
-\contentsline {chapter}{\numberline {2}Návrh a implementace modulu pro dvouvodičový JTAG protokol}{14}{chapter.13}%
-\contentsline {chapter}{\numberline {3}Návrh a implementace rozšiřujícího modulu pro přístup na systémovou sběrnici pomocí JTAG protokolu}{15}{chapter.14}%
-\contentsline {section}{\numberline {3.1}Systémová sběrnice PULP RICS-V}{15}{section.15}%
-\contentsline {subsection}{\numberline {3.1.1}Signály systémové sběrnice}{15}{subsection.16}%
-\contentsline {subsection}{\numberline {3.1.2}Průběh přístupu na systémovou sběrnici}{16}{subsection.19}%
-\contentsline {chapter}{Závěr}{17}{section*.23}%
-\contentsline {chapter}{Literatura}{18}{section*.25}%
-\contentsline {chapter}{Seznam symbol\r {u} a zkratek}{19}{section*.27}%
-\contentsline {chapter}{Seznam p\v {r}\'{\i }loh}{20}{section*.29}%
-\contentsline {chapter}{\numberline {A}Některé příkazy balíčku \texttt {thesis} }{21}{chapter.30}%
-\contentsline {section}{\numberline {A.1}Příkazy pro sazbu veličin a jednotek }{21}{section.31}%
-\contentsline {section}{\numberline {A.2}Příkazy pro sazbu symbolů }{21}{section.34}%
-\contentsline {chapter}{\numberline {B}Druhá příloha }{22}{chapter.36}%
-\contentsline {chapter}{\numberline {C}Příklad sazby zdrojových kódů }{23}{chapter.39}%
-\contentsline {section}{\numberline {C.1}Balíček \texttt {listings} }{23}{section.40}%
-\contentsline {chapter}{\numberline {D}Obsah elektronické přílohy }{26}{chapter.109}%
+\contentsline {section}{\numberline {1.3}Systém pro testování \acs {RISC-V}}{12}{section.13}%
+\contentsline {chapter}{\numberline {2}Návrh a implementace modulu pro dvouvodičový JTAG protokol}{15}{chapter.16}%
+\contentsline {chapter}{\numberline {3}Návrh a implementace rozšiřujícího modulu pro přístup na systémovou sběrnici pomocí JTAG protokolu}{16}{chapter.17}%
+\contentsline {section}{\numberline {3.1}Systémová sběrnice PULP RICS-V}{16}{section.18}%
+\contentsline {subsection}{\numberline {3.1.1}Signály systémové sběrnice}{16}{subsection.19}%
+\contentsline {subsection}{\numberline {3.1.2}Průběh přístupu na systémovou sběrnici}{17}{subsection.22}%
+\contentsline {section}{\numberline {3.2}Návrh časově optimalizovaného protokolu pro přístup na systémovou sběrnici}{17}{section.25}%
+\contentsline {subsection}{\numberline {3.2.1}Zkrácení adresy a přenášených dat}{18}{subsection.26}%
+\contentsline {subsection}{\numberline {3.2.2}Busy-wait mód}{18}{subsection.27}%
+\contentsline {subsection}{\numberline {3.2.3}Dynamic-wait mód}{19}{subsection.34}%
+\contentsline {chapter}{Závěr}{20}{section*.36}%
+\contentsline {chapter}{Literatura}{21}{section*.38}%
+\contentsline {chapter}{Seznam symbol\r {u} a zkratek}{22}{section*.40}%
+\contentsline {chapter}{Seznam p\v {r}\'{\i }loh}{23}{section*.42}%
