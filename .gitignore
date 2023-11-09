@@ -2,6 +2,7 @@
 pdf/
 obrazky/
 logo/
+text/bibliografie.tex
 
 # files
 *.aux

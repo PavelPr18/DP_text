@@ -58,8 +58,9 @@ V případě obou variant protokolu je adresa zkrácena na 21 bitů namísto pů
 Délka přenášených dat může být volena jako \textbf{Word} (32-bitů), \textbf{Half-Word} (16-bitů) a \textbf{Byte} (8-bitů). Obvyklým způsobem je přístup na sběrnici v celé šířce 32 bitů. Nicméně, pro specifické požadavky je možné využít také kratších variant. Příkladem může být    . Délka přenesených dat je dekódována podle adresy na signál \textit{be} systémové sběrnice.
 
 \subsection{Busy-wait mód} \label{subsec:busy-wait}
-Varianta protokolu \textbf{Busy-wait} je založena na principu signalizace probíhající operace na sběrnici před odesíláním požadovaných dat. Tato informace je předávána debuggeru jako 3-bitová hodnota \textit{status}, prostřednictvím signálu \acs{TDO}. \textit{Status} může nabývat hodnot dle tabulky \ref{tab:status_vals}, kde je vidět že je využitý pouze jeden bit ze tří. Důvodem je to, že pole \textit{status} je vysíláno současně s hodnotou \textit{op}, která je vysílána debuggerem a ta již 3-bitová být musí. Význam hodnot \textit{op} (operace) je popsán v tabulce \ref{tab:op_vals}. Výběr zda bude následovat zápis nebo čtení je určen nejnižším bitem pole \textit{op}, kde hodnota log. 0 určuje čtení a log. 1 zápis, což je shodné z významem signálu \textit{we} systémové sběrnice popsaného v tabulce \ref{tab:ri5cy_bus}. Hodnota \textit{op} určuje také délku přenášených dat, kterou je tak tedy možné kdykoliv změnit.
+Varianta protokolu \textbf{Busy-wait} je založena na principu signalizace probíhající operace na sběrnici před odesíláním požadovaných dat. Tato informace je předávána debuggeru jako 3-bitová hodnota \textit{status}, prostřednictvím signálu \acs{TDO}. \textit{Status} může nabývat hodnot dle tabulky \ref{tab:status_vals}, kde je vidět že je využitý pouze jeden bit ze tří. Důvodem je to, že pole \textit{status} je vysíláno současně s hodnotou \textit{op}, která je vysílána debuggerem a ta již 3-bitová být musí. Tato varianta protokolu využívá toho, že debugger signálem \acs{TMS} prochází stavovým automatem \acs{TAP} po spuštění požadavku na systémové sběrnici vždy přes stav \textit{Run-Test/Idle}, kde čeká po několik taktů testovacích hodin. Tato prodleva dává možnost systémové sběrnici požadavek dokončit. V případě nedokončeného požadavku je při dalším požadavku signalizováno pomocí hodnoty \textit{status = busy}, že nebude akceptován.
 
+Význam hodnot \textit{op} (operace) je popsán v tabulce \ref{tab:op_vals}. Výběr zda bude následovat zápis nebo čtení je určen nejnižším bitem pole \textit{op}, kde hodnota log. 0 určuje čtení a log. 1 zápis, což je shodné z významem signálu \textit{we} systémové sběrnice popsaného v tabulce \ref{tab:ri5cy_bus}. Hodnota \textit{op} určuje také délku přenášených dat, kterou je tak tedy možné kdykoliv změnit.
 
 \begin{table}[!h]
   \caption{Tabulka status hodnot.}
@@ -102,7 +103,7 @@ Varianta protokolu \textbf{Busy-wait} je založena na principu signalizace prob�
 			\hline	   
 			5 & word / W & Zápis slova (následuje odesílání adresy a zapisovaných dat)\\
 			\hline
-			6 & data & Uvozuje přenos vyčtených dat)\\
+			6 & data & Uvozuje přenos vyčtených dat\\
 			\hline
 			7 & cmd & Uvozuje změnu módu\\
 			\hline
@@ -112,7 +113,8 @@ Varianta protokolu \textbf{Busy-wait} je založena na principu signalizace prob�
 	\label{tab:op_vals}
 \end{table}
 
-Průběh JTAG komunikace pro zápis na systémovou sběrnici je zobrazen na obrázku \ref{fig:busy_w}. Po přechodu do stavu \textit{Shift-DR} je nejdříve odeslána 3-bitová hodnota \textit{op}, která může v případě zápisu nabývat hodnot 1, 3 a 5, podle délky zapisovaných dat. Následuje odesílání 21-bitové adresy, na kterou se budou data zapisovat. Po odeslání adresy následuje přenos požadovaných dat k zápisu, jejichž délka je určena hodnotou polem \textit{op}. 
+\subsubsection{Busy-wait mód - zápis} 
+Průběh JTAG komunikace pro zápis na systémovou sběrnici je zobrazen na obrázku \ref{fig:busy_w}. Po přechodu do stavu \textit{Shift-DR} je nejdříve odeslána 3-bitová hodnota \textit{op}, která může v případě zápisu nabývat hodnot 1, 3 a 5, podle délky zapisovaných dat. Následuje odesílání 21-bitové adresy, na kterou se budou data zapisovat. Po odeslání adresy následuje přenos požadovaných dat k zápisu, jejichž délka je určena hodnotou polem \textit{op}. Pro zápis na další adresu je třeba provést průchod stavovým automatem \acs{TAP}. Pokud je navrácena hodnota \textit{status} = 1 (busy), nebudou následující data zapsána, protože se musí nejdříve dokončit probíhající zápis na systémovou sběrnici. Debugger by v tomto případě měl požadavek pro zapsání dat opakovat dokud nebude navrácen \textit{status} = 0 (no\_err).
 
 \begin{figure}[!h]
   \begin{center}
@@ -122,5 +124,15 @@ Průběh JTAG komunikace pro zápis na systémovou sběrnici je zobrazen na obr�
 	\label{fig:busy_w}
 \end{figure}
 
+\subsubsection{Busy-wait mód - čtení} 
+Průběh JTAG komunikace v případě čtení ze systémové sběrnice je zobrazen na obrázku \ref{fig:busy_r}. Nejprve je odeslána hodnota \textit{op} 0, 2 nebo 4, která dle tabulky \ref{tab:op_vals} uvozuje odesílání adresy, ze které bude vyčtena hodnota registru a délku čtených dat. Jakmile je adresa odeslána, spustí se čtení ze systémové sběrnice. Debugger projde pomocí signálu \acs{TMS} stavovým automatem \acs{TAP} dle stavového diagramu na obrázku \ref{fig:tap_controller} zpět do stavu \textit{Shift-DR} a oděšle hodnotu \textit{op} = 6, kterou je požadováno odeslání dat vyčtených z požadované adresy. V případě, že je navrácen \textit{status} = 1 (busy), odpovídající nedokončenému čtení ze systémové sběrnice, nejsou následující data platná. V dalším průchodu má debugger možnost žádat od data znovu (\textit{op} = 6) nebo zažádat o vyčtení z jiné adresy.
+
+\begin{figure}[!h]
+  \begin{center}
+    \includegraphics[scale=0.45]{obrazky/busy_r.pdf}
+  \end{center}
+  \caption{Průběh čtení ze systémové sběrnice v Busy-wait módu.}
+	\label{fig:busy_r}
+\end{figure}
 
 \subsection{Dynamic-wait mód}	\label{subsec:dyn-wait}

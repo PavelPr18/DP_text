@@ -15,8 +15,10 @@
 \contentsline {section}{\numberline {3.2}Návrh časově optimalizovaného protokolu pro přístup na systémovou sběrnici}{17}{section.25}%
 \contentsline {subsection}{\numberline {3.2.1}Zkrácení adresy a přenášených dat}{18}{subsection.26}%
 \contentsline {subsection}{\numberline {3.2.2}Busy-wait mód}{18}{subsection.27}%
-\contentsline {subsection}{\numberline {3.2.3}Dynamic-wait mód}{19}{subsection.34}%
-\contentsline {chapter}{Závěr}{20}{section*.36}%
-\contentsline {chapter}{Literatura}{21}{section*.38}%
-\contentsline {chapter}{Seznam symbol\r {u} a zkratek}{22}{section*.40}%
-\contentsline {chapter}{Seznam p\v {r}\'{\i }loh}{23}{section*.42}%
+\contentsline {subsubsection}{Busy-wait mód - zápis}{18}{section*.32}%
+\contentsline {subsubsection}{Busy-wait mód - čtení}{20}{section*.35}%
+\contentsline {subsection}{\numberline {3.2.3}Dynamic-wait mód}{20}{subsection.38}%
+\contentsline {chapter}{Závěr}{21}{section*.40}%
+\contentsline {chapter}{Literatura}{22}{section*.42}%
+\contentsline {chapter}{Seznam symbol\r {u} a zkratek}{23}{section*.44}%
+\contentsline {chapter}{Seznam p\v {r}\'{\i }loh}{24}{section*.46}%
