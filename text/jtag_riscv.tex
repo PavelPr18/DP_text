@@ -5,9 +5,9 @@ Tato kapitola popisuje princip přenosu dat na pomocí komunikačního protokolu
 \acs{JTAG} (\acl{JTAG}) je standardizovaná komunikační sběrnice určená pro testování integrovaných obvodů a \acs{DPS} (\acl{DPS}).
 \acs{JTAG} rozhraní definuje tzv. \acs{TAP} (\acl{TAP}), který je skupinou vstupů a výstupů určených k testování. Jelikož \acs{JTAG} je synchronní sběrnice, její rozhraní zahrnuje samostatný vodič pro hodinový signál \textbf{\acs{TCK}} (\acl{TCK}). Dalším vodičem je \textbf{\acs{TMS}} (\acl{TMS}), kterým je přenášen řídicí signál pro stavový automat. Vodiče zajišťující přenos dat jsou označeny \textbf{\acs{TDI}} (\acl{TDI}) a \textbf{\acs{TDO}} (\acl{TDO}). Jako volitelný vodič základního rozhraní je možné připojit také \textbf{\acs{TRST}} (\acl{TRST}), který provádí reset stavového automatu. Reset se využívá především k inicializaci automatu během připojení napájení. \cite {IEEE_1149-1} \cite{JTAG}      
 
-\section{Stavový automat dle IEEE 1149.1}
+\section{Stavový automat JTAGu}
 Standard IEEE 1149.1 definuje stavový automat, který je hlavní součástí \acs{TAP} (\acl{TAP}). Stavový diagram stavového automatu je zobrazen na obrázku \ref{fig:tap_controller}. Všechny přechody mezi stavy toho automatu jsou plně synchronní se vstupním hodinovým signálem \acs{TCK} a jsou určeny řídicím signálem \acs{TMS}. Důležitou vlastností tohoto stavového automatu je způsob resetování jeho stavu, tedy návrat do stavu \textbf{Test-Logic-Reset}. Reset lze provést pomocí minimálně pěti po sobě jdoucích hodinových taktů, kdy hodnota řídicího signálu \acs{TMS} setrvává v log. 1. Tento způsob resetování je možný provést ze kteréhokoliv stavu automatu. Příkladem může být provedení resetu, když se automat nachází ve stavu \textbf{Shift-DR}. Automat tedy projde postupně stavy \textbf{Exit1-DR}, \textbf{Update-DR}, \textbf{Select-DR-Scan} a \textbf{Select-DR-Scan} až do stavu \textbf{Test-Logic-Reset}. V případě kratší cesty do \textbf{Test-Logic-Reset} stavu setrvává při hodnotě log. 1 na signálu \acs{TMS} v tomto stavu.
-\begin{figure}[!h]
+\begin{figure}[H]
   \begin{center}
     \includegraphics[scale=0.34]{obrazky/JTAG_TAP_Controller_State_Diagram.png}
   \end{center}
@@ -25,3 +25,53 @@ Pro procesory architektury \acs{RISC-V} je definován systém pro jejich testov�
   \caption{Blokové schéma systému použitého pro testování \acs{RISC-V} procesorů \cite{risc-v_dbg}}
 	\label{fig:blok_sch_risc-v_dbg}
 \end{figure}
+
+\section{Systémová sběrnice PULP RICS-V}
+Jako procesorové jádro je v integrovaném obvodu, pro který je rozšíření JTAG front-endu navrženo, použito procesorové jádro typu \acs{RISC-V}. Konkrétní typ procesorového jádra je použit \acs{PULP} (\acl{PULP}) C32E40P 32-bitový procesor. Předchozí verze jádra je nazvána RI5CY. Rozdíly mezi těmito verzemi nejsou pro popis systémové sběrnice a návrh rozšiřujícího JTAG front-endu podstatné, proto je možné se v této práci odkazovat na starší verzi RI5CY. Systémová sběrnice tohoto procesorového jádra je založena na jednoduchém \textbf{Request-Grant} protokolu. Na sběrnici mohou být obecně připojeni \textit{master} a \textit{slave} moduly. V tomto případě bude uvažován jako master modul navržený modul rozšiřující JTAG front-end a jako slave například paměť.
+
+\subsection{Signály systémové sběrnice}
+V tabulce \ref{tab:ri5cy_bus} jsou popsány jednotlivé signály systémové sběrnice procesory PULP RICS-V.
+
+\begin{table}[H]
+	\FloatBarrier
+  \caption{Tabulka popisu signálů systémové sběrnice PULP RICS-V. \cite{ri5cy}}
+  \begin{center}
+  	\small
+	  \begin{tabular}{!{\vrule width 1.2pt}M{2.2cm}|M{1.5cm}|M{1.8cm}|M{7cm}!{\vrule width 1.2pt}}
+	    \noalign{\hrule height 1.2pt}
+	    Název signálu & Označení signálu & Počet bitů & Význam signálu\\
+	    \noalign{\hrule height 1.2pt}
+	    Address & addr & 32 & Adresa registru ke kterému se bude přistupovat\\
+			\hline
+			Write data & wdata & 32 & Data zapisovaná do registru dle adresy\\
+			\hline
+			Request & req & 1 & Požadavek přístupu na sběrnici\\
+			\hline
+			Grant & gnt & 1 & Potvrzení příjmu požadavek přístupu na sběrnici\\
+			\hline			
+			Read data valid & rvalid & 1 & Potvrzení platnosti čtených dat\\
+			\hline
+			Read data & rdata & 32 & Data čtená z registru dle adresy\\
+			\hline
+			Write enable & we & 1 & Určuje zápis(log. 1)/čtení(log. 0)\\
+			\hline
+			Byte enable & be & 4 & Vybírá bajty, které budou zapsány/čteny\\
+			\hline
+			\noalign{\hrule height 1.2pt}
+		\end{tabular}
+  \end{center}
+	\label{tab:ri5cy_bus}
+\end{table}
+
+\subsection{Průběh přístupu na systémovou sběrnici}
+Obecný průběh přístupu na systémovou sběrnici je zobrazen na obrázku \ref{fig:ri5cy_bus_basic}. Pokud chce master modul přistoupit na sběrnici vystaví adresu na \textit{data\_addr\_o}, nastaví signály \textit{data\_we\_o}, \textit{data\_be\_o}, v případě zápisu vystaví také zapisovaná data \textit{data\_wdata\_o} a nastaví request \textit{data\_req\_o} na hodnotu log. 1. Jakmile je slave modu připravený obsloužit požadavek nastaví \textit{data\_gnt\_i} na hodnotu log. 1. Po přijetí gnt může master v dalším taktu adresu, data a signály \textit{data\_we\_o}, \textit{data\_be\_o} změnit. Slave také nastaví signál \textit{data\_rvalid\_i} na hodnotu log. 1 jeden nebo více taktů po nastavení signálu \textit{data\_gnt\_i}. V případě čtení má signál \textit{data\_rvalid\_i} význam platnosti čtených dat, které jsou vystaveny na \textit{data\_rdata\_i}. V případě zápisu musí být signál \textit{data\_rvalid\_i} nastaven také, i když čtená data nemají žádný význam. \cite{ri5cy}
+
+\begin{figure}[!h]
+  \begin{center}
+    \includegraphics[scale=0.65]{obrazky/ri5cy_bus_basic.png}
+  \end{center}
+  \caption{Základní sekvence přístupu na systémovou sběrnici \cite{ri5cy}}
+	\label{fig:ri5cy_bus_basic}
+\end{figure}
+
+!!!!!!!TODO: popsat back-to-back a slow response
