@@ -68,7 +68,7 @@ Význam hodnot \textit{op} (operace) je popsán v tabulce \ref{tab:op_vals}. Vý
 \subsubsection{Busy-wait mód - zápis} 
 Průběh JTAG komunikace pro zápis na systémovou sběrnici je zobrazen na obrázku \ref{fig:busy_w}. Po přechodu do stavu \textit{Shift-DR} je nejdříve odeslána 3-bitová hodnota \textit{op}, která může v případě zápisu nabývat hodnot 1, 3 a 5, podle délky zapisovaných dat. Následuje odesílání 21-bitové adresy, na kterou se budou data zapisovat. Po odeslání adresy následuje přenos požadovaných dat k zápisu, jejichž délka je určena hodnotou polem \textit{op}. Pro zápis na další adresu je třeba provést průchod stavovým automatem JTAGu. Pokud je navrácena hodnota \textit{status} = 1 (busy), nebudou následující data zapsána, protože se musí nejdříve dokončit probíhající zápis na systémovou sběrnici. Debugger by v tomto případě měl požadavek pro zapsání dat opakovat dokud nebude navrácen \textit{status} = 0 (no\_err).
 
-\begin{figure}[!h]
+\begin{figure}[H]
   \begin{center}
     \includegraphics[scale=0.6]{obrazky/busy_w.pdf}
   \end{center}
@@ -114,4 +114,16 @@ Průběh JTAG komunikace v případě čtení v dynamickém režimu je zobrazen 
   \end{center}
   \caption{Průběh čtení ze systémové sběrnice v Dynamic-wait módu.}
 	\label{fig:wait_r}
+\end{figure}
+
+\section{Implementace}
+
+\subsection{Busy-wait mód} 
+
+\begin{figure}[!h]
+  \begin{center}
+    \includegraphics[scale=1.5]{obrazky/busy_wait_fsm.pdf}
+  \end{center}
+  \caption{Stavový diagram popisující část hlavního stavového automatu pro busy-wait režim.}
+	\label{fig:busy_wait_fsm}
 \end{figure}

@@ -7,20 +7,27 @@
 \contentsline {section}{\numberline {1.1}Základní popis}{12}{section.9}%
 \contentsline {section}{\numberline {1.2}Stavový automat JTAGu}{12}{section.10}%
 \contentsline {section}{\numberline {1.3}Systém pro testování \acs {RISC-V}}{13}{section.13}%
-\contentsline {section}{\numberline {1.4}Systémová sběrnice PULP RICS-V}{13}{section.16}%
-\contentsline {subsection}{\numberline {1.4.1}Signály systémové sběrnice}{14}{subsection.17}%
-\contentsline {subsection}{\numberline {1.4.2}Průběh přístupu na systémovou sběrnici}{15}{subsection.20}%
-\contentsline {chapter}{\numberline {2}Návrh a implementace modulu pro dvouvodičový JTAG protokol}{17}{chapter.23}%
-\contentsline {chapter}{\numberline {3}Návrh a implementace rozšiřujícího modulu pro přístup na systémovou sběrnici pomocí JTAG protokolu}{18}{chapter.24}%
-\contentsline {section}{\numberline {3.1}Návrh časově optimalizovaného protokolu pro přístup na systémovou sběrnici}{18}{section.25}%
-\contentsline {subsection}{\numberline {3.1.1}Zkrácení adresy a přenášených dat}{18}{subsection.26}%
-\contentsline {subsection}{\numberline {3.1.2}Busy-wait mód}{19}{subsection.27}%
-\contentsline {subsubsection}{Busy-wait mód - zápis}{19}{section*.32}%
-\contentsline {subsubsection}{Busy-wait mód - čtení}{20}{section*.35}%
-\contentsline {subsection}{\numberline {3.1.3}Dynamic-wait mód}{21}{subsection.38}%
-\contentsline {subsubsection}{Dynamic-wait mód - zápis}{21}{section*.39}%
-\contentsline {subsubsection}{Dynamic-wait mód - čtení}{22}{section*.42}%
-\contentsline {chapter}{Závěr}{23}{section*.46}%
-\contentsline {chapter}{Literatura}{24}{section*.48}%
-\contentsline {chapter}{Seznam symbol\r {u} a zkratek}{25}{section*.50}%
-\contentsline {chapter}{Seznam p\v {r}\'{\i }loh}{26}{section*.52}%
+\contentsline {subsection}{\numberline {1.3.1}\acs {DMI}}{14}{subsection.16}%
+\contentsline {subsection}{\numberline {1.3.2}Přístup na systémovou sběrnici pomocí Debug modulu}{14}{subsection.17}%
+\contentsline {section}{\numberline {1.4}Systémová sběrnice PULP RICS-V}{14}{section.18}%
+\contentsline {subsection}{\numberline {1.4.1}Signály systémové sběrnice}{15}{subsection.19}%
+\contentsline {subsection}{\numberline {1.4.2}Průběh přístupu na systémovou sběrnici}{15}{subsection.22}%
+\contentsline {chapter}{\numberline {2}Návrh a implementace modulu pro dvouvodičový JTAG protokol}{17}{chapter.25}%
+\contentsline {section}{\numberline {2.1}Redukovaný počet pinů \acs {JTAG} rozhraní}{17}{section.26}%
+\contentsline {section}{\numberline {2.2}Serializace signálů čtyřvodičového \acs {JTAG} rozhraní}{18}{section.29}%
+\contentsline {subsection}{\numberline {2.2.1}Řízení úrovně na TMSC pinu}{18}{subsection.32}%
+\contentsline {chapter}{\numberline {3}Návrh a implementace rozšiřujícího modulu pro přístup na systémovou sběrnici pomocí JTAG protokolu}{20}{chapter.35}%
+\contentsline {section}{\numberline {3.1}Návrh časově optimalizovaného protokolu pro přístup na systémovou sběrnici}{20}{section.36}%
+\contentsline {subsection}{\numberline {3.1.1}Zkrácení adresy a přenášených dat}{20}{subsection.37}%
+\contentsline {subsection}{\numberline {3.1.2}Busy-wait mód}{21}{subsection.38}%
+\contentsline {subsubsection}{Busy-wait mód - zápis}{21}{section*.43}%
+\contentsline {subsubsection}{Busy-wait mód - čtení}{22}{section*.46}%
+\contentsline {subsection}{\numberline {3.1.3}Dynamic-wait mód}{23}{subsection.49}%
+\contentsline {subsubsection}{Dynamic-wait mód - zápis}{23}{section*.50}%
+\contentsline {subsubsection}{Dynamic-wait mód - čtení}{24}{section*.53}%
+\contentsline {section}{\numberline {3.2}Implementace}{25}{section.56}%
+\contentsline {subsection}{\numberline {3.2.1}Busy-wait mód}{25}{subsection.57}%
+\contentsline {chapter}{Závěr}{26}{section*.61}%
+\contentsline {chapter}{Literatura}{27}{section*.63}%
+\contentsline {chapter}{Seznam symbol\r {u} a zkratek}{28}{section*.65}%
+\contentsline {chapter}{Seznam p\v {r}\'{\i }loh}{30}{section*.67}%

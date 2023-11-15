@@ -16,7 +16,10 @@ Standard IEEE 1149.1 definuje stavový automat, který je hlavní součástí \a
 \end{figure}
 
 \section{Systém pro testování \acs{RISC-V}}
-Pro procesory architektury \acs{RISC-V} je definován systém pro jejich testování a ladění. Blokové schéma systému je zobrazené na obrázku \ref{fig:blok_sch_risc-v_dbg}. Systém umožňuje vykonávat krátký program 
+Pro procesory architektury \acs{RISC-V} je definován systém pro jejich testování a ladění. Blokové schéma systému je zobrazené na obrázku \ref{fig:blok_sch_risc-v_dbg}. Nadřazeným systémem je dle schématu pro testování integrovaných je \textbf{debugger}, kterým je zpravidla testovací software v PC. Pro jeho spojení s integrovaným obvodem je třeba zpravidla použít převodník z USB na JTAG protokol. Systém pro přístup k procesorovému jádru se nazývá \ac{DM}. Součástí Debug modulu je blok realizující přístup na systémovou sběrnici (System Bus Access), který je popsaný v podkapitole \ref{subsec:dm_sba}. Přechod mezi hodinovými doménami \acs{JTAG}u a systémové sběrnice v tomto systému realizuje rozhraní \ac{DMI}. \cite{risc-v_dbg}
+
+
+Systém umožňuje vykonávat krátký program 
 
 \begin{figure}[!h]
   \begin{center}
@@ -25,6 +28,11 @@ Pro procesory architektury \acs{RISC-V} je definován systém pro jejich testov�
   \caption{Blokové schéma systému použitého pro testování \acs{RISC-V} procesorů \cite{risc-v_dbg}}
 	\label{fig:blok_sch_risc-v_dbg}
 \end{figure}
+
+\subsection{\acs{DMI}}		\label{subsec:dmi}
+
+\subsection{Přístup na systémovou sběrnici pomocí Debug modulu}		\label{subsec:dm_sba}
+Pro přístup	na systémovou sběrnici jsou v debug modulu vyhrazeny registry 			. \cite{risc-v_dbg}
 
 \section{Systémová sběrnice PULP RICS-V}
 Jako procesorové jádro je v integrovaném obvodu, pro který je rozšíření JTAG front-endu navrženo, použito procesorové jádro typu \acs{RISC-V}. Konkrétní typ procesorového jádra je použit \acs{PULP} (\acl{PULP}) C32E40P 32-bitový procesor. Předchozí verze jádra je nazvána RI5CY. Rozdíly mezi těmito verzemi nejsou pro popis systémové sběrnice a návrh rozšiřujícího JTAG front-endu podstatné, proto je možné se v této práci odkazovat na starší verzi RI5CY. Systémová sběrnice tohoto procesorového jádra je založena na jednoduchém \textbf{Request-Grant} protokolu. Na sběrnici mohou být obecně připojeni \textit{master} a \textit{slave} moduly. V tomto případě bude uvažován jako master modul navržený modul rozšiřující JTAG front-end a jako slave například paměť.

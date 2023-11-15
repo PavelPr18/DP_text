@@ -1,1 +1,39 @@
 \chapter{Návrh a implementace modulu pro dvouvodičový JTAG protokol}
+Tato kapitola popisuje princip fungování dvouvodičového \acs{JTAG} protokolu a způsoby jeho aktivace.
+
+\section{Redukovaný počet pinů \acs{JTAG} rozhraní}	\label{sec:2w_interface}
+Důvodem pro snížení počtu pinů potřebných pro testování integrovaných obvodů je možnost využít dva volné piny k jinému účelu během testování, například pro jejich běžnou funkci mimo testovací režim. Dvouvodičové \acs{JTAG} rozhraní je definováno standardem IEEE 1149.7 a je nazýváno \textbf{compact \acs{JTAG}} (c\acs{JTAG}). Dvouvodičové rozhraní využívá ke komunikaci piny \acs{TCK} a \acs{TMS}, které mají pro dvouvodičovou variantu označení s příponou C (compact), tedy TCKC a TMSC. \cite{IEEE_1149-7} \cite{JTAG}
+
+Dvouvodičová varianta podporuje zapojení ve hvězdicové topologii jak je vidět na obrázku \ref{fig:star2_sch}. Nicméně návrh modulu popisovaného v této kapitole se omezuje pouze na jedno zařízení, protože funkcionalita podporující připojení více zařízení do hvězdicové topologie není implementována.
+
+\begin{figure}[!h]
+  \begin{center}
+    \includegraphics[scale=0.9]{obrazky/Example_of_reduced_pin_count_JTAG_interface.pdf}
+  \end{center}
+  \caption{Průběh čtení ze systémové sběrnice v Busy-wait módu.}
+	\label{fig:star2_sch}
+\end{figure}
+
+Nevýhodou dvouvodičové varianty \acs{JTAG} rozhraní je potřeba serializace jednotlivých signálu původního čtyřvodičového rozhraní. Z tohoto důvodu je přenos dat pomocí dvouvodičové varianty v nejlepším případě 3-krát pomalejší než v případě původní čtyřvodičové. \cite{IEEE_1149-7}
+
+\section{Serializace signálů čtyřvodičového \acs{JTAG} rozhraní}	\label{sec:oscan1} 
+Pro dvouvodičovou variantu \acs{JTAG} komunikace je zapotřebí odesílat hodnoty signálů původního čtyřvodičového \acs{JTAG} protokolu sériově, v rámci jediného signálu TMSC. Standard IEEE 1149.7 definuje několik verzí formátu serializace dat. Pro návrh popisovaný v této práci byl vybrán základní formát OSCAN1, který definuje prostou serializaci hodnot \acs{TDI}, \acs{TMS} a \acs{TDO} signálů. Formát OSCAN1 je zobrazen na obrázku \ref{fig:oscan}, kde je obecně naznačena předcházející aktivační sekvence. První bit formátu má hodnotu negace \acs{TDI} signálu, druhým bitem je přenesena hodnota \acs{TMS} a třetím je přenášena hodnota \acs{TDO}	opačným směrem. \cite{IEEE_1149-7}
+
+\begin{figure}[!h]
+  \begin{center}
+    \includegraphics[scale=0.8]{obrazky/cJTAG_oscan.pdf}
+  \end{center}
+  \caption{Průběh serializace \acs{JTAG} signálů v OSCAN1 formátu.}
+	\label{fig:oscan}
+\end{figure}
+    
+\subsection{Řízení úrovně na TMSC pinu}	\label{subsec:oscan1_drive} 
+Při komunikaci pomocí dvouvodičového \acs{JTAG} rozhraní se stává pin TMSC obousměrným, jelikož jsou přenášeny výstupní testovací data zpět směrem k debuggeru. Z toho důvodu musí být ošetřena možnost buzení pinu současně z obou směrů. Proto je standardem IEEE 1149.7 definováno pravidlo pro buzení TMSC pinu během komunikace. Na obrázku \ref{fig:oscan_drive} je znázorněn průběh komunikace v OSCAN1 formátu, kde jsou přehledně znázorněny okamžiky buzení TMSC pinu debuggerem (\acs{DTS}) a \acs{JTAG} systémem (\acs{TS}). Znázorněn je také průběh skutečné hodnoty na TMSC pinu, kde je možné si všimnout, že při střídání směrů buzení je na pinu TMSC zaručen stav vysoké impedance po dobu poloviny periody hodinového signálu TCKC. Tímto je ošetřen vznik konfliktu v buzení TMSC pinu. \cite{IEEE_1149-7}
+
+\begin{figure}[!h]
+  \begin{center}
+    \includegraphics[scale=0.75]{obrazky/cJTAG_oscan_drive.pdf}
+  \end{center}
+  \caption{Průběh buzení TMSC pinu v OSCAN1 formátu.}
+	\label{fig:oscan_drive}
+\end{figure}
