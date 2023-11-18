@@ -37,3 +37,113 @@ Při komunikaci pomocí dvouvodičového \acs{JTAG} rozhraní se stává pin TMS
   \caption{Průběh buzení TMSC pinu v OSCAN1 formátu.}
 	\label{fig:oscan_drive}
 \end{figure}
+
+\subsection{Clock-gating}	\label{subsec:oscan1_clk_gate}
+
+\section{Aktivační sekvence dvouvodičové varianty JTAG protokolu}
+Pro volbu komunikace pomocí dvouvodičové varianty \acs{JTAG} protokolu je zapotřebí provedení aktivace tohoto režimu, která je definována standardem IEEE 1149.7. Jelikož aktivaci musí být možné provést vždy, tedy i při komunikaci dvoudrátovou variantou, jsou k ní využity piny \acs{TCK} a \acs{TMS}. Varianta \acs{JTAG} protokolu je volena debuggerem, který vyvolá příslušnou aktivační sekvenci na pinech \acs{TCK} a \acs{TMS}. \cite{IEEE_1149-7}
+
+Aktivační sekvence se skládá se dvou hlavních částí. Nejdříve je zapotřebí deaktivovat funkcionalitu probíhajícího komunikačního režimu. Tato část se nazývá "Selection Escape" sekvence. Tato sekvence uvozuje následující sekvenci, určenou pro výběr komunikačního režimu, která se nazývá "Selection Sequence". \cite{IEEE_1149-7}
+
+\begin{figure}[!h]
+  \begin{center}
+    \includegraphics[scale=0.7]{obrazky/cJTAG_selection.pdf}
+  \end{center}
+  \caption{Průběh aktivační sekvence pro dvouvodičovou variantu \acs{JTAG} protokolu.}
+	\label{fig:cJTAG_sel}
+\end{figure}
+
+\subsection{Úvodní sekvence pro přepnutí na jinou variantu JTAG protokolu}	\label{subsec:sel_escape}
+Pro přenastavení varianty \acs{JTAG} komunikace je zapotřebí nejdříve deaktivovat probíhající komunikaci. Sekvence sloužící k deaktivaci je vidět na obrázku \ref{fig:cJTAG_sel} v první části průběhu. Tato sekvence využívá principu přepínání hodnoty na TMSC pinu v době, kdy je na TCKC signálu hodnota log. 1. Díky tomuto principu je možné vyvolat sekvenci během komunikace, protože hodinový signál \acs{TCK} po dobu sekvence negeneruje hodinové impulsy a nemůže tak nastat situace, kdy jsou hodnoty na pinu \acs{TMS} dále zpracovány \acs{JTAG} systémem. \cite{IEEE_1149-7}
+
+Pro tuto sekvenci jsou dle standardu IEEE 1149.7 definovány 4 její varianty, které jsou odlišeny počtem pulsů vygenerovaných na TMSC pinu, během setrvávající úrovně log. 1 na TCKC signálu. Pokud debugger během této sekvence vygeneruje 1 puls, tedy 2 až 3 hrany, je sekvence rezervována pro uživatelské rozšíření. V případě 2 pulsů (4 až 5 hran) nastane pouze deaktivace probíhající komunikace. Pokud jsou odeslány 4 a více pulsů (8 a více hran), dojde k resetu. Dříve popsané varianty nejsou v rámci návrhu popsaného v této kapitole podporovány, z důvodu jejich postradatelnosti pro přepínání mezi dvou a čtyřvodičovým rozhraním. \cite{IEEE_1149-7}
+
+Pro možnost přepínání jsou definovány 3 pulsy (6 až 7 hran), jak je vidět na obrázku \ref{fig:cJTAG_sel}, kde jsou zobrazeny dvě možné varianty s různou výchozí hodnotou. Oba případy mají různý počet hran, ale počet nástupných hran je vždy stejný. Po takto odeslané sekvenci následuje sekvence pro volbu varianty JTAG protokolu.
+
+\subsection{Sekvence pro výběr varianty JTAG protokolu}
+Sekvence výběru varianty \acs{JTAG} protokolu je zobrazena v druhé části obrázku \ref{fig:cJTAG_sel}. Sekvence již probíhá běžným způsobem komunikace, kdy debugger generuje hodinový signál TCKC a odesílá požadovanou hodnotu sekvence TMSC signálem. Sekvence se dělí na tři části, které jsou zobrazeny v tabulce \ref{tab:cJTAG_sel}.
+
+\begin{table}[!h]
+  \caption{Formát sekvence pro výběr varianty JTAG protokolu \cite{IEEE_1149-7}}
+  \begin{center}
+  	\small
+	  \begin{tabular}{!{\vrule width 1.2pt}c|c|c!{\vrule width 1.2pt}}
+	    \noalign{\hrule height 1.2pt}
+				\acl{OAC} (\acs{OAC}) [4] & \acl{EC} (\acs{EC}) [4] & \acl{CP} (\acs{CP}) [4-n]\\
+			\noalign{\hrule height 1.2pt}
+		\end{tabular}
+  \end{center}
+	\label{tab:cJTAG_sel}
+\end{table}
+
+\subsubsection{Část pro výběr konkrétní čtyř nebo dvouvodičové varianty - \acs{OAC}}
+První část sekvence má konstantní délku 4 bity. První dva bity musí mít pro správnou aktivaci hodnotu log. 0. Další dva bity definují výběr topologie, na které je \acs{JTAG} zařízení připojeno. Na výběr jsou možnosti sériové topologie, tedy čtyřvodičové zapojení s jedním nebo více zařízeními zapojenými do série. Dalšími možnostmi jsou zapojení ve hvězdicové topologii ve čtyřvodičové a dvouvodičové variantě. Pro popisované navržené řešení je podstatná sériová topologie a dvouvodičová varianta hvězdicové topologie, které odpovídají hodnotám \acs{OAC} dle tabulky \ref{tab:oac}. \cite{IEEE_1149-7}
+
+\begin{table}[!h]
+  \caption{Tabulka významu OAC hodnot.}
+  \begin{center}
+  	\small
+	  \begin{tabular}{!{\vrule width 1.2pt}c|c!{\vrule width 1.2pt}}
+	    \noalign{\hrule height 1.2pt}
+	    Hodnota \acs{OAC} & Význam hodnoty\\
+	    \noalign{\hrule height 1.2pt}
+			0100 & Čtyřvodičová sériová topologie\\
+			\hline
+			1100 & Dvouvodičová hvězdicová topologie\\
+			\hline
+			\noalign{\hrule height 1.2pt}
+		\end{tabular}
+  \end{center}
+	\label{tab:oac}
+\end{table}
+
+\subsubsection{Část rozšiřující informace o výběru varianty - \acs{EC}}
+Druhou částí aktivační sekvence je čtyřbitová hodnota nazvaná \acl{EC}. Tato hodnota pouze doplňuje informace o výběru varianty \acs{JTAG} komunikace. První tři bity udávají informace o výchozím stavu hlavního stavového automatu \acs{TAP} a o dodatečné ochraně před současným buzením pinů \acs{TMS} a \acs{TDO}. Hodnoty těchto bitů budou v rámci navrženého řešení log. 0. Výchozí stav stavového automatu je tak \textit{Run-Test/Idle} nebo \textit{Test-Logic-Reset} a dodatečná ochrana je deaktivovaná. Nejvíce významný bit nese informaci o krátké nebo dlouhé variantě popisované aktivační sekvence. Dlouhá forma aktivační sekvence obsahuje navíc hodnotu registru pro funkcionalitu, která není v návrhu implementována. Z tohoto důvodu musí být vždy zvolena krátká forma aktivační sekvence, které odpovídá hodnota log. 1 tohoto bitu. Hodnota této části aktivační sekvence musí být tedy vždy 1000. \cite{IEEE_1149-7}
+
+\subsubsection{Kontrolní část - \acs{CP}}
+Poslední část aktivační sekvence slouží k prodloužení sekvence ze strany debuggeru nebo k vyvolání resetu. Prodloužení sekvence může být pro některé implementace debuggerů výhodné, pokud je třeba prodlevu před začátkem samotné komunikace pro přípravu dat. Možnost sekvenci prodloužit je v návrhu popsaného v této kapitole realizováno. Vyvolání resetu v rámci aktivační sekvence není navrženým řešením podporováno. 
+
+Formát této části sekvence je zobrazen v tabulce \ref{tab:cJTAG_sel_cp}. Jednobitová hodnota první části \textit{Preamble} je \acs{JTAG} systémem ignorována a na její hodnotě nezáleží. Nicméně je doporučeno, aby byla tato hodnota stejná jako hodnota prvního bitu následující části \textit{Body}. Tato perioda hodinového signálu \acs{TCK} může sloužit debuggeru jako čas pro změnu zdroje buzení TMSC pinu. Následuje část těla kontrolní části sekvence, která může nabývat hodnot dle tabulky \ref{tab:cp_body}, kde je popsaný taky význam těchto hodnot. Poslední částí je jednobitová hodnota \textit{Postamble}, která je \acs{JTAG} systémem také ignorována, přičemž je doporučeno použít stejnou hodnotu jako poslední bit části \textit{Body}. \cite{IEEE_1149-7}              
+
+\begin{table}[H]
+  \caption{Formát kontrolní části sekvence pro výběr varianty JTAG protokolu \cite{IEEE_1149-7}}
+  \begin{center}
+  	\small
+	  \begin{tabular}{!{\vrule width 1.2pt}c|c|c!{\vrule width 1.2pt}}
+	    \noalign{\hrule height 1.2pt}
+				Preamble [1] & Body [2-n] & Postamble [1]\\
+			\noalign{\hrule height 1.2pt}
+		\end{tabular}
+  \end{center}
+	\label{tab:cJTAG_sel_cp}
+\end{table}
+
+\begin{table}[H]
+  \caption{Tabulka významu CP hodnot.}
+  \begin{center}
+  	\small
+	  \begin{tabular}{!{\vrule width 1.2pt}c|c|c!{\vrule width 1.2pt}}
+	    \noalign{\hrule height 1.2pt}
+	    Hodnota CP\_BODY & Označení & Význam hodnoty\\
+	    \noalign{\hrule height 1.2pt}
+			00 & CP\_END & Ukončení sekvence\\
+			\hline
+			01 nebo 10 & CP\_NOP & Rozšíření aktivační sekvence o jeden bit\\
+			\hline
+			11 & CP\_RES & Reset \acs{JTAG} systému\\
+			\hline
+			\noalign{\hrule height 1.2pt}
+		\end{tabular}
+  \end{center}
+	\label{tab:cp_body}
+\end{table}
+
+Jelikož navrženým systémem je podporováno pouze prodloužení aktivační sekvence, tedy hodnota CP\_BODY = CP\_NOP zakončená hodnotou CP\_END, je na obrázku \ref{fig:cJTAG_sel_cp_nop} zobrazen průběh sekvence v případě jejího prodloužení. Hodnota těla kontrolní části pro prodloužení sekvence o jeden bit může nabývat hodnot 01 nebo 10 dle tabulky \ref{tab:cp_body}. Proto je tedy sekvence prodlužována střídáním hodnot log. 0 a 1 na TMSC pinu, přičemž se uvažují poslední dva bity CP\_BODY, které nabývají požadovaných hodnot CP\_NOP. Sekvence bude ukončena odesláním hodnoty CP\_END (00), jak zobrazeno na konci vyznačené části \textit{Body}.
+
+\begin{figure}[!h]
+  \begin{center}
+    \includegraphics[scale=0.65]{obrazky/cJTAG_sel_sequence_cp_nop.pdf}
+  \end{center}
+  \caption{Průběh kontrolní části aktivační sekvence varianty \acs{JTAG} protokolu.}
+	\label{fig:cJTAG_sel_cp_nop}
+\end{figure}

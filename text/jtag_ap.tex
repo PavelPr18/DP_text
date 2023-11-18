@@ -1,15 +1,17 @@
 \chapter{Návrh a implementace rozšiřujícího modulu pro přístup na systémovou sběrnici pomocí JTAG protokolu}	\label{jtag_ap}
 Pro přístup na systémovou sběrnici procesoru jsou navrženy dvě varianty komunikačního protokolu přenášeného pomocí JTAG rozhraní, které jsou popsány v této kapitole. Obě varianty protokolu jsou popsány pro na 4-vodičové variantě \acs{JTAG} komunikace mezi debuggerem (aplikační prostředí pro testování obvodů) a \acs{JTAG} systému (navržený systém pro testování).
 
+
+
 \section{Návrh časově optimalizovaného protokolu pro přístup na systémovou sběrnici}	\label{sec:protokoly}
 Pro přístup na systémovou sběrnici byly navrženy dvě varianty protokolu využívajícího JTAG protokolu. Obě varianty se od sebe liší především, ve způsobu signalizace nepřístupnosti systémové sběrnice z důvodu probíhající operace na sběrnici. První variantou je využití obdobného principu jako u stávajícího řešení. Tedy pokud se operace na systémovou sběrnici nestihne provést do okamžiku dalšího požadavku, je skrze JTAG komunikaci odeslán zpět status \textbf{Busy}. Druhou variantou je využití výstupního \acs{TDO} portu k signalizaci dokončení operace na systémové sběrnici dynamicky.
 
 \subsection{Zkrácení adresy a přenášených dat}
 V případě obou variant protokolu je adresa zkrácena na 21 bitů namísto původních 32 bitů. Důvodem pro zkrácení adresy je velikost adresního prostoru celého systému, ve kterém není využito 11 bitů z adresy. Z tohoto důvodu je výhodné nevyužívané bity adresy neodesílat a adresu korektně rozšířit na původních 32-bitů až po jejím příjmu. Tato optimalizace ušetří 11 taktů testovacího hodinového signálu \acs{TCK} pro každý přístup na sběrnici. V případě většího adresního prostoru systému by se pouze odesílaná adresa rozšířila.
 
-Délka přenášených dat může být volena jako \textbf{Word} (32-bitů), \textbf{Half-Word} (16-bitů) a \textbf{Byte} (8-bitů). Obvyklým způsobem je přístup na sběrnici v celé šířce 32 bitů. Nicméně, pro specifické požadavky je možné využít také kratších variant. Příkladem může být    . Délka přenesených dat je dekódována podle adresy na signál \textit{be} systémové sběrnice.
+Délka přenášených dat může být volena jako \textbf{Word} (32-bitů), \textbf{Half-Word} (16-bitů) a \textbf{Byte} (8-bitů). Obvyklým způsobem je přístup na sběrnici v celé šířce 32 bitů. Nicméně, pro specifické požadavky je možné využít také kratších variant. Příkladem může být potřeba přepsání logické hodnoty určitého bitu registru, či určité skupiny bitů. Délka přenesených dat je dekódována podle adresy na signál \textit{be} systémové sběrnice.
 
-\subsection{Busy-wait mód} \label{subsec:busy-wait}
+\subsection{Busy-wait varianta protokolu} \label{subsec:busy-wait}
 Varianta protokolu \textbf{Busy-wait} je založena na principu signalizace probíhající operace na sběrnici před odesíláním požadovaných dat. Tato informace je předávána debuggeru jako 3-bitová hodnota \textit{status}, prostřednictvím signálu \acs{TDO}. \textit{Status} může nabývat hodnot dle tabulky \ref{tab:status_vals}, kde je vidět že je využitý pouze jeden bit ze tří. Důvodem je to, že pole \textit{status} je vysíláno současně s hodnotou \textit{op}, která je vysílána debuggerem a ta již 3-bitová být musí. Tato varianta protokolu využívá toho, že debugger signálem \acs{TMS} prochází stavovým automatem \acs{TAP} po spuštění požadavku na systémové sběrnici vždy přes stav \textit{Run-Test/Idle}, kde čeká po několik taktů testovacích hodin. Tato prodleva dává možnost systémové sběrnici požadavek dokončit. V případě nedokončeného požadavku je při dalším požadavku signalizováno pomocí hodnoty \textit{status = busy}, že nebude akceptován.
 
 Význam hodnot \textit{op} (operace) je popsán v tabulce \ref{tab:op_vals}. Výběr zda bude následovat zápis nebo čtení je určen nejnižším bitem pole \textit{op}, kde hodnota log. 0 určuje čtení a log. 1 zápis, což je shodné z významem signálu \textit{we} systémové sběrnice popsaného v tabulce \ref{tab:ri5cy_bus}. Hodnota \textit{op} určuje také délku přenášených dat, kterou je tak tedy možné kdykoliv změnit.
@@ -87,7 +89,7 @@ Průběh JTAG komunikace v případě čtení ze systémové sběrnice je zobraz
 	\label{fig:busy_r}
 \end{figure}
 
-\subsection{Dynamic-wait mód}	\label{subsec:dyn-wait}
+\subsection{Dynamic-wait varianta protokolu}	\label{subsec:dyn-wait}
 Varianta protokolu \textbf{Dynamic-wait} je založena na principu signalizace probíhající operace na sběrnici prostřednictvím \acs{TDO} signálu v rámci stavu \textit{Shift-DR} stavového automatu JTAGu. V případě probíhající operace na systémové sběrnici je tato informace signalizována úrovní log. 0 na \acs{TDO} pinu v definovaném úseku komunikace, tedy po spuštění požadavku na systémovou sběrnici. Jakmile je požadavek na systémovou sběrnici obsloužen dochází k nastavení \acs{TDO} pinu na úroveň log. 1 po jeden takt hodinového signálu \acs{TCK}. Poté následuje další komunikace jak je popsáno v níže pro zápis a čtení.
 
 Použití tohoto komunikačního módu má velkou výhodu z hlediska časové optimalizace přenosu dat. Tato výhoda spočívá v nejkratší možné prodlevě způsobené obsluhou požadavku systémovou sběrnicí, protože je tato informace signalizována dynamicky ihned po dokončení požadavku. Další aspekt, že je tento způsob časově optimálnější, spočívá v setrvávání stavového automatu JTAGu ve stavu \textit{Shift-DR}. Při komunikaci se tak neztrácí čas průchodem stavového automatu přes stav \textit{Run-Test/Idle}. Další výhodou je možnost střídat zápis a čtení v rámci jednoho průchodu stavového automatu JTAGu stavem \textit{Shift-DR}. Tato vlastnost může výrazně časově optimalizovat případy komunikace, kdy je zapotřebí přečíst hodnotu registru a změnit v něm hodnotu pouze některých bitů.
