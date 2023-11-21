@@ -15,7 +15,7 @@ Standard IEEE 1149.1 definuje stavový automat, který je hlavní součástí \a
 	\label{fig:tap_controller}
 \end{figure}
 
-\section{Systém pro testování \acs{RISC-V}}
+\section{Systém pro testování \acs{RISC-V}}		\label{sec:risc-v_dbg}
 Pro procesory architektury \acs{RISC-V} je definován systém pro jejich testování a ladění. Blokové schéma systému je zobrazené na obrázku \ref{fig:blok_sch_risc-v_dbg}. Nadřazeným systémem je dle schématu pro testování integrovaných je \textbf{debugger}, kterým je zpravidla testovací software v PC. Pro jeho spojení s integrovaným obvodem je třeba zpravidla použít převodník z USB na JTAG protokol. Systém pro přístup k procesorovému jádru se nazývá \ac{DM}. Součástí Debug modulu je blok realizující přístup na systémovou sběrnici (System Bus Access), který je popsaný v podkapitole \ref{subsec:dm_sba}. Přechod mezi hodinovými doménami \acs{JTAG}u a systémové sběrnice v tomto systému realizuje rozhraní \ac{DMI}. \cite{risc-v_dbg}
 
 

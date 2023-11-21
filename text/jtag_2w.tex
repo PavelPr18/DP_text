@@ -147,3 +147,30 @@ Jelikož navrženým systémem je podporováno pouze prodloužení aktivační s
   \caption{Průběh kontrolní části aktivační sekvence varianty \acs{JTAG} protokolu.}
 	\label{fig:cJTAG_sel_cp_nop}
 \end{figure}
+
+\section{Implementace modulu pro dvouvodičový JTAG protokol}
+Navržený obvod pro detekci aktivační sekvence a převod vstupních signálů je realizován jako převodník, který je předřazen stávajícímu systému pro testování \acs{RISC-V} popsanému v kapitole \ref{sec:risc-v_dbg} a také navrženému rozšiřujícímu modulu popsanému v kapitole \ref{jtag_ap}. Navržené řešení bylo popsáno v jazyce \acs{VHDL} a jeho funkcionalita byla ověřena pomocí simulace v jazyce SystemVerilog. Implementace návrhu byla provedena v prostředí \textit{DVT (Design and Verification Tool)} od společnosti \textit{AMIQ} a simulace obvodu v simulátoru \textit{Xcelium} od firmy \textit{Cadence}.
+
+\subsection{Základní popis návrhu}	\label{subsec:cJTAG_adapter}
+%TODO: - nakreslit blok a v nem muxování a clk gating 
+%			- zduraznit ze to nema rychlejsi hod signal
+%			- výchozí stav je 4 protoze... 			
+
+
+\subsection{Detekce úvodní sekvence pro přepnutí JTAG protokolu}	\label{subsec:sel_escape_det}
+Pro detekci sekvence určené pro přepínání mezi dvou a čtyřvodičovou variantou \acs{JTAG} protokolu, popsané v kapitole \ref{subsec:sel_escape}, byl navržen obvod jehož schéma je zobrazeno na obrázku \ref{fig:cJTAG_escape_circuit}. Tato implementace obvodu pro detekci byla inspirována, příkladem možné implementace uvedeném ve standardu IEEE 1149.7.
+
+Jelikož "Escape" sekvence spočívá v generování pulsů na signálu TMSC v době, kdy je signál TCKC držen v log. 1. je zapotřebí pulsy detekovat. V obvodu na obrázku se nachází 4-bitový posuvný registr, na jehož sériový vstup je přivedena hodnota log. 1. Na tento posuvný registr je přiveden hodinový signál \textit{sr\_clk}, který je generován logickou funkci \textit{XNOR}, tedy ekvivalencí referenčního signálu \textit{tmsc\_fq} navzorkovaného poslední sestupnou hranou hodinového signálu TCKC. Podle hodnoty posuvného registru je poté nastaven vždy jeden ze signálů \textit{reset}, \textit{select}, \textit{deselect} nebo \textit{custom}. Díky použití hradel s logickou funkci \textit{AND} s negovaným vstupem je nastaven pouze jeden ze signálů, podle počtu nástupných hran vygenerovaných na vstupu TMSC, během TCKC signálu setrvávajícího na úrovni log. 1. 
+
+Neméně důležitou částí obvodu jsou dva klopné obvody generující asynchronní reset \textit{(sr\_rst\_n)} pro posuvný registr. Reset je třeba generovat vždy případě hodnoty log. 0 na hodinovém signálu TCKC, protože posuvný registr musí být resetován vždy mimo "Escape" sekvenci. Jelikož reset posuvného registru je aktivní při hodnotě log. 0, je tedy generován sestupnou hranou signálu TCKC, která překlopí první klopný obvod a hodnoty na vstupu hradla \textit{XNOR} budou rozdílné. Nástupná hrana signálu TCKC překlopí druhý klopný obvod a vstupy hradla budou vždy totožné, čímž je reset vždy uvolněn.
+
+Jelikož pro návrh popsaný v této kapitole je uvažována pouze detekce tří pulsů ("Selection Sequence"), je dále obvodem zpracováván pouze signál \textit{select}. Ostatní signály příslušející jiným variantám nejsou dále využívány, ale jsou generovány dle obvodu na obrázku pro případné budoucí využití.
+
+
+\begin{figure}[!h]
+  \begin{center}
+    \includegraphics[scale=0.7]{obrazky/cJTAG_escape_circuit.pdf}
+  \end{center}
+  \caption{Schéma obvodu pro detekci úvodní sekvence pro přepnutí JTAG protokolu.}
+	\label{fig:cJTAG_escape_circuit}
+\end{figure}
