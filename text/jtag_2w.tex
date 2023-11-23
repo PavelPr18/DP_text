@@ -1,3 +1,6 @@
+% TODO: sjednotit pořadí "dvou nebo čtyřvodič"
+%				projít si jak nazývám DTS a TS
+
 \chapter{Návrh a implementace modulu pro dvouvodičový JTAG protokol}
 Tato kapitola popisuje princip fungování dvouvodičového \acs{JTAG} protokolu a způsoby jeho aktivace.
 
@@ -15,8 +18,8 @@ Dvouvodičová varianta podporuje zapojení ve hvězdicové topologii jak je vid
 \end{figure}
 
 Nevýhodou dvouvodičové varianty \acs{JTAG} rozhraní je potřeba serializace jednotlivých signálu původního čtyřvodičového rozhraní. Z tohoto důvodu je přenos dat pomocí dvouvodičové varianty v nejlepším případě 3-krát pomalejší než v případě původní čtyřvodičové. \cite{IEEE_1149-7}
-
 \section{Serializace signálů čtyřvodičového \acs{JTAG} rozhraní}	\label{sec:oscan1} 
+
 Pro dvouvodičovou variantu \acs{JTAG} komunikace je zapotřebí odesílat hodnoty signálů původního čtyřvodičového \acs{JTAG} protokolu sériově, v rámci jediného signálu TMSC. Standard IEEE 1149.7 definuje několik verzí formátu serializace dat. Pro návrh popisovaný v této práci byl vybrán základní formát OSCAN1, který definuje prostou serializaci hodnot \acs{TDI}, \acs{TMS} a \acs{TDO} signálů. Formát OSCAN1 je zobrazen na obrázku \ref{fig:oscan}, kde je obecně naznačena předcházející aktivační sekvence. První bit formátu má hodnotu negace \acs{TDI} signálu, druhým bitem je přenesena hodnota \acs{TMS} a třetím je přenášena hodnota \acs{TDO}	opačným směrem. \cite{IEEE_1149-7}
 
 \begin{figure}[!h]
@@ -160,12 +163,11 @@ Navržený obvod pro detekci aktivační sekvence a převod vstupních signálů
 \subsection{Detekce úvodní sekvence pro přepnutí JTAG protokolu}	\label{subsec:sel_escape_det}
 Pro detekci sekvence určené pro přepínání mezi dvou a čtyřvodičovou variantou \acs{JTAG} protokolu, popsané v kapitole \ref{subsec:sel_escape}, byl navržen obvod jehož schéma je zobrazeno na obrázku \ref{fig:cJTAG_escape_circuit}. Tato implementace obvodu pro detekci byla inspirována, příkladem možné implementace uvedeném ve standardu IEEE 1149.7.
 
-Jelikož "Escape" sekvence spočívá v generování pulsů na signálu TMSC v době, kdy je signál TCKC držen v log. 1. je zapotřebí pulsy detekovat. V obvodu na obrázku se nachází 4-bitový posuvný registr, na jehož sériový vstup je přivedena hodnota log. 1. Na tento posuvný registr je přiveden hodinový signál \textit{sr\_clk}, který je generován logickou funkci \textit{XNOR}, tedy ekvivalencí referenčního signálu \textit{tmsc\_fq} navzorkovaného poslední sestupnou hranou hodinového signálu TCKC. Podle hodnoty posuvného registru je poté nastaven vždy jeden ze signálů \textit{reset}, \textit{select}, \textit{deselect} nebo \textit{custom}. Díky použití hradel s logickou funkci \textit{AND} s negovaným vstupem je nastaven pouze jeden ze signálů, podle počtu nástupných hran vygenerovaných na vstupu TMSC, během TCKC signálu setrvávajícího na úrovni log. 1. 
+Jelikož "Escape" sekvence spočívá v generování pulsů na signálu TMSC v době, kdy je signál TCKC držen v log. 1. je zapotřebí pulsy detekovat. V obvodu na obrázku se nachází 4-bitový posuvný registr, na jehož sériový vstup je přivedena hodnota log. 1. Na tento posuvný registr je přiveden hodinový signál \textit{sr\_clk}, který je generován logickou funkci \textit{XNOR}, tedy ekvivalencí referenčního signálu \textit{tmsc\_fq} navzorkovaného poslední sestupnou hranou hodinového signálu TCKC. Podle hodnoty posuvného registru je poté nastaven vždy jeden ze signálů \textit{reset\_detect}, \textit{select\_detect}, \textit{deselect\_detect} nebo \textit{custom\_detect}. Díky použití hradel s logickou funkci \textit{AND} s negovaným vstupem je nastaven pouze jeden ze signálů, podle počtu nástupných hran vygenerovaných na vstupu TMSC, během TCKC signálu setrvávajícího na úrovni log. 1. 
 
 Neméně důležitou částí obvodu jsou dva klopné obvody generující asynchronní reset \textit{(sr\_rst\_n)} pro posuvný registr. Reset je třeba generovat vždy případě hodnoty log. 0 na hodinovém signálu TCKC, protože posuvný registr musí být resetován vždy mimo "Escape" sekvenci. Jelikož reset posuvného registru je aktivní při hodnotě log. 0, je tedy generován sestupnou hranou signálu TCKC, která překlopí první klopný obvod a hodnoty na vstupu hradla \textit{XNOR} budou rozdílné. Nástupná hrana signálu TCKC překlopí druhý klopný obvod a vstupy hradla budou vždy totožné, čímž je reset vždy uvolněn.
 
-Jelikož pro návrh popsaný v této kapitole je uvažována pouze detekce tří pulsů ("Selection Sequence"), je dále obvodem zpracováván pouze signál \textit{select}. Ostatní signály příslušející jiným variantám nejsou dále využívány, ale jsou generovány dle obvodu na obrázku pro případné budoucí využití.
-
+Jelikož pro návrh popsaný v této kapitole je uvažována pouze detekce tří pulsů ("Selection Sequence"), je dále obvodem zpracováván pouze signál \textit{select\_detect}. Ostatní signály příslušející jiným variantám nejsou dále využívány, ale jsou generovány dle obvodu na obrázku pro případné budoucí využití.
 
 \begin{figure}[!h]
   \begin{center}
@@ -173,4 +175,34 @@ Jelikož pro návrh popsaný v této kapitole je uvažována pouze detekce tří
   \end{center}
   \caption{Schéma obvodu pro detekci úvodní sekvence pro přepnutí JTAG protokolu.}
 	\label{fig:cJTAG_escape_circuit}
+\end{figure}
+
+\subsection{Zpracování sekvence pro výběr varianty JTAG protokolu}	\label{subsec:sel_seq_det}
+Za účelem zpracování sekvence pro výběr dvou či čtyřvodičové varianty \acs{JTAG} protokolu byl návrh obvodu rozdělen na dvě části, pro zpracování konkrétních úseků sekvence uvedených v tabulce \ref{tab:cJTAG_sel}. První část je prostým porovnáním přijatých hodnot \acs{OAC} a \acs{EC} s konstantou. Druhá část realizuje detekci prodloužení aktivační sekvence podle přijatých hodnot v části \acs{CP}.
+
+\subsubsection{Část obvodu pro výběr konkrétní čtyř nebo dvouvodičové varianty a rozšiřující části}
+Pro porovnání prvních dvou částí aktivační sekvence byla navržena část obvodu znázorněná na obrázku \ref{fig:cJTAG_sel_oac_ec_circuit}. Tato část obvodu realizuje porovnání přijatých hodnot \acs{OAC} a \acs{EC} s podporovanými možnostmi dle tabulky \ref{tab:oac} (hodnota části \acs{EC} může nabývat pouze hodnoty 1000).
+
+Obvod obsahuje 8-bitový posuvný registr (\textit{sel\_sreg}) pro příjem hodnoty sekvence a 3-bitový čítač (\textit{sel\_cnt}) pro počítání 8 přijatých bitů. Tento registr a čítač má vstup povolující hodinový signál CE (Clock Enable). Signál povolující příjem hodnoty je nastaven do hodnoty log. 1 po skončení "Escape" sekvence a to se sestupnou hranou hodinového signálu TCKC, kdy je hodnota signálu \textit{select\_detect} log. 1 vygenerovaná předchozí částí obvodu uvedené na obrázku \ref{fig:cJTAG_escape_circuit}. Jakmile čítač napočítá 8 přijatých bitů a je posuvný registr deaktivován setrvává v něm přijatá 8-bitová hodnota. Signál CE je nastaven na hodnotu log. 0 po dokončení čítání, kdy čítač nastaví výstup TC (Terminal Count) do log. 1 a tím je na vstup prvního klopného obvodu přivedena log. 0.
+
+Hodnota přijatá posuvným registrem je porovnávána se dvěma konstantami, které určují zvolenou variantu \acs{JTAG} protokolu. Pokud je zvolena dvouvodičová varianta je nastaven signál \textit{jtag\_2w\_en}, povolující funkcionalitu pro zpracování komunikace v dvouvodičové variantě. Zejména se jedná o multiplexory propojující \acs{JTAG} signály pro další zpracování a stavový automat pro  zpracování formátu OSCAN1 popsaného v kapitol \ref{sec:oscan1}. Pokud hodnota posuvného registru shodná s jednou z konstant a čítač napočítal 8 nasunutých bitů je hodnota signálu \textit{sel\_seq\_match} log. 1 a je tak aktivován obvod pro zpracování poslední části aktivační sekvence, jehož schéma je uvedeno na obrázku \ref{fig:cJTAG_sel_cp_circuit}. 
+
+
+\begin{figure}[!h]
+  \begin{center}
+    \includegraphics[scale=0.78]{obrazky/cJTAG_sel_oac_ec_circuit.pdf}
+  \end{center}
+  \caption{Schéma obvodu pro zpracování sekvence pro výběr varianty JTAG protokolu.}
+	\label{fig:cJTAG_sel_oac_ec_circuit}
+\end{figure}
+
+\subsubsection{Část obvodu pro pro zpracování kontrolní části aktivační sekvence}
+Pro poslední část aktivační sekvence byl navržen a implementován obvod zobrazený na obrázku \ref{fig:cJTAG_sel_cp_circuit}. Popsaný obvod podporuje prodloužení sekvence při příjmu hodnoty CP\_NOP definované v tabulce \ref{tab:cp_body} a následné ukončení sekvence hodnotou CP\_NOP. Nejkratší možnou variantou kontrolní části aktivační sekvence je 
+
+\begin{figure}[!h]
+  \begin{center}
+    \includegraphics[scale=0.78]{obrazky/cJTAG_sel_cp_circuit.pdf}
+  \end{center}
+  \caption{Schéma obvodu pro zpracování kontrolní části aktivační sekvence.}
+	\label{fig:cJTAG_sel_cp_circuit}
 \end{figure}
