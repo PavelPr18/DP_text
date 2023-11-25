@@ -4,8 +4,8 @@
 \chapter{Návrh a implementace modulu pro dvouvodičový JTAG protokol}
 Tato kapitola popisuje princip fungování dvouvodičového \acs{JTAG} protokolu a způsoby jeho aktivace.
 
-\section{Redukovaný počet pinů \acs{JTAG} rozhraní}	\label{sec:2w_interface}
-Důvodem pro snížení počtu pinů potřebných pro testování integrovaných obvodů je možnost využít dva volné piny k jinému účelu během testování, například pro jejich běžnou funkci mimo testovací režim. Dvouvodičové \acs{JTAG} rozhraní je definováno standardem IEEE 1149.7 a je nazýváno \textbf{compact \acs{JTAG}} (c\acs{JTAG}). Dvouvodičové rozhraní využívá ke komunikaci piny \acs{TCK} a \acs{TMS}, které mají pro dvouvodičovou variantu označení s příponou C (compact), tedy TCKC a TMSC. \cite{IEEE_1149-7} \cite{JTAG}
+\section{Účel redukce počet pinů \acs{JTAG} rozhraní}	\label{sec:2w_interface}
+Důvodem pro snížení počtu pinů potřebných pro testování integrovaných obvodů je možnost využít dva volné piny k jinému účelu během testování, například pro jejich běžnou funkci, kterou mají mimo testovací režim. Dvouvodičové \acs{JTAG} rozhraní je definováno standardem IEEE 1149.7 a je nazýváno \textbf{compact \acs{JTAG}} (c\acs{JTAG}). Dvouvodičové rozhraní využívá ke komunikaci piny \acs{TCK} a \acs{TMS}, které mají pro dvouvodičovou variantu označení s příponou C (compact), tedy TCKC a TMSC. \cite{IEEE_1149-7} \cite{JTAG}
 
 Dvouvodičová varianta podporuje zapojení ve hvězdicové topologii jak je vidět na obrázku \ref{fig:star2_sch}. Nicméně návrh modulu popisovaného v této kapitole se omezuje pouze na jedno zařízení, protože funkcionalita podporující připojení více zařízení do hvězdicové topologie není implementována.
 
@@ -13,12 +13,12 @@ Dvouvodičová varianta podporuje zapojení ve hvězdicové topologii jak je vid
   \begin{center}
     \includegraphics[scale=0.9]{obrazky/Example_of_reduced_pin_count_JTAG_interface.pdf}
   \end{center}
-  \caption{Průběh čtení ze systémové sběrnice v Busy-wait módu.}
+  \caption{Blokové schéma hvězdicové topologie \acs{JTAG} rozhraní ve dvouvodičové variantě. \cite{JTAG}.}
 	\label{fig:star2_sch}
 \end{figure}
 
 Nevýhodou dvouvodičové varianty \acs{JTAG} rozhraní je potřeba serializace jednotlivých signálu původního čtyřvodičového rozhraní. Z tohoto důvodu je přenos dat pomocí dvouvodičové varianty v nejlepším případě 3-krát pomalejší než v případě původní čtyřvodičové. \cite{IEEE_1149-7}
-\section{Serializace signálů čtyřvodičového \acs{JTAG} rozhraní}	\label{sec:oscan1} 
+\section{Serializace signálů čtyřvodičového \acs{JTAG} rozhraní na dvouvodičové}	\label{sec:oscan1} 
 
 Pro dvouvodičovou variantu \acs{JTAG} komunikace je zapotřebí odesílat hodnoty signálů původního čtyřvodičového \acs{JTAG} protokolu sériově, v rámci jediného signálu TMSC. Standard IEEE 1149.7 definuje několik verzí formátu serializace dat. Pro návrh popisovaný v této práci byl vybrán základní formát OSCAN1, který definuje prostou serializaci hodnot \acs{TDI}, \acs{TMS} a \acs{TDO} signálů. Formát OSCAN1 je zobrazen na obrázku \ref{fig:oscan}, kde je obecně naznačena předcházející aktivační sekvence. První bit formátu má hodnotu negace \acs{TDI} signálu, druhým bitem je přenesena hodnota \acs{TMS} a třetím je přenášena hodnota \acs{TDO}	opačným směrem. \cite{IEEE_1149-7}
 
@@ -41,7 +41,7 @@ Při komunikaci pomocí dvouvodičového \acs{JTAG} rozhraní se stává pin TMS
 	\label{fig:oscan_drive}
 \end{figure}
 
-\subsection{Clock-gating}	\label{subsec:oscan1_clk_gate}
+%\subsection{Clock-gating}	\label{subsec:oscan1_clk_gate}
 
 \section{Aktivační sekvence dvouvodičové varianty JTAG protokolu}
 Pro volbu komunikace pomocí dvouvodičové varianty \acs{JTAG} protokolu je zapotřebí provedení aktivace tohoto režimu, která je definována standardem IEEE 1149.7. Jelikož aktivaci musí být možné provést vždy, tedy i při komunikaci dvoudrátovou variantou, jsou k ní využity piny \acs{TCK} a \acs{TMS}. Varianta \acs{JTAG} protokolu je volena debuggerem, který vyvolá příslušnou aktivační sekvenci na pinech \acs{TCK} a \acs{TMS}. \cite{IEEE_1149-7}
@@ -197,18 +197,33 @@ Hodnota přijatá posuvným registrem je porovnávána se dvěma konstantami, kt
 \end{figure}
 
 \subsubsection{Část obvodu pro pro zpracování kontrolní části aktivační sekvence}
-Pro poslední část aktivační sekvence byl navržen a implementován obvod zobrazený na obrázku \ref{fig:cJTAG_sel_cp_circuit}. Popsaný obvod podporuje prodloužení sekvence při příjmu hodnoty CP\_NOP a následné ukončení sekvence hodnotou CP\_END, které jsou definované v tabulce \ref{tab:cp_body} . % Nejkratší možnou variantou kontrolní části aktivační sekvence je 
+Pro poslední část aktivační sekvence byl navržen a implementován obvod zobrazený na obrázku \ref{fig:cJTAG_sel_cp_circuit}. Popsaný obvod podporuje prodloužení sekvence při příjmu hodnoty CP\_NOP a následné ukončení sekvence hodnotou CP\_END, které jsou definované v tabulce \ref{tab:cp_body} .q % Nejkratší možnou variantou kontrolní části aktivační sekvence je 
 
 Obvod na obrázku je aktivován jakmile předcházející část obvodu uvedená na obrázku \ref{fig:cJTAG_sel_oac_ec_circuit} vyhodnotí shodu hodnoty s jednou z konstant pro výběr varianty \acs{JTAG} protokolu (nastaví se signál \textit{sel\_seq\_match}). V tomto taktu TCKC je povolen 2 a 3-bitový posuvný registr signálem \textit{CE}. Dvoubitový posuvný registr, jehož vstupem je signál TMSC, slouží k vyhodnocení hodnoty CP\_END. Jakmile je hodnota tohoto posuvného registru 00, což odpovídá hodnotě CP\_END pro ukončení sekvence výstupem logické funkce \textit{NOR} log. 1.
 
 Tříbitový posuvný registr slouží k povolení detekce hodnoty CP\_END, nejdříve po třech hodinových taktech TCKC. Důvodem pro zdržení vyhodnocení hodnoty je zpožděno o 3 takty, protože nejkratší možná délka této části sekvence jsou 4 bity. Platná hodnota část CP\_BODY je tudíž nasunuta do 2-bitového posuvného registru nejdříve po třech taktech TCKC, dle průběhu na obrázku \ref{fig:cJTAG_sel_cp_nop}. Tento posuvný registr je vždy před aktivační sekvencí synchronně resetován signálem \textit{sel\_rst}, který je generován vždy po skončení úvodní sekvence popsané v kapitole \ref{subsec:sel_escape_det}. Tato deaktivace po dobu tří taktů by bylo možné realizovat také čítačem od 0 do 3. Tato varianta řešení by ušetřila jeden klopný obvod, ale přidalo jedno logické hradlo. Z hlediska velikosti čipu je tato úprava zanedbatelná, a proto bylo v návrhu ponecháno prvotní řešení.
 
 V případě, že jsou výše popsané podmínky pro ukončení aktivační sekvence splněny je signálem CE povoleno překlopení posledního klopného obvodu s následující nástupnou hranou TCKC. Signál \textit{online\_i} je tedy nastaven v rámci hodinového taktu, kdy je přijímán poslední bit aktivační sekvence označený \textit{Postamble}, dle formátu kontrolní části aktivační sekvence uvedeného v tabulce \ref{tab:cJTAG_sel_cp}. Signál CE všech klopných obvodů je opět deaktivován po dokončení aktivace a je tak zamezeno dalšímu překlápění. Signál \textit{online\_i} je využíván pro povolení funkcionality stavového automatu pro serializaci dat v případě dvouvodičové varianty protokolu a také povoluje propagaci hodinového signálu TCKC pro další části obvodu. 
-s
+
+Logické hradlo na výstupu registru pro nastavení \textit{online} signálu využívá resetovací signál \textit{sel\_rst} k zapsání log. 0 na signál \textit{online\_i} ihned se sestupnou hranou TCKC ukončující "Escape" sekvenci. Bez této logické funkce docházelo v případě přepínání z dvouvodičové varianty k propagaci jedné periody hodinového signálu TCKC i po "Escape" sekvenci, proto bylo třeba zaručit deaktivaci \textit{online} po celou dobu aktivační sekvence.
+
 \begin{figure}[!h]
   \begin{center}
     \includegraphics[scale=0.78]{obrazky/cJTAG_sel_cp_circuit.pdf}
   \end{center}
   \caption{Schéma obvodu pro zpracování kontrolní části aktivační sekvence.}
 	\label{fig:cJTAG_sel_cp_circuit}
+\end{figure}
+
+\subsection{Stavový automat pro serializaci signálů čtyřvodičového rozhraní}	\label{subsec:oscan1_fsm}
+Zpracování serializovaných hodnot signálů odesílaných přes TMSC pin dle formátu OSCAN1 popsaného v kapitole \ref{sec:oscan1} je realizováno pomocí jednoduchého stavového automatu, jehož stavový diagram je uvedený na obrázku \ref{fig:cJTAG_oscan1_fsm}. Stavový automat svůj stav mění se sestupnou hranou hodinového signálu TCKC, protože hodnota na TMSC se vždy mění se sestupnou hranou a na nástupnou je vzorkována.
+
+Výchozím stavem je stav \textbf{S\_IDLE}, ve kterém automat setrvává a je do něj vždy navrácen pokud nejsou signály \textit{online\_i} a \textit{jtag\_2w\_en} ve stavu log. 1. Tímto je zajištěna nečinnost automatu v průběhu aktivační sekvence a také, když je zvolena čtyřvodičová varianta \acs{JTAG} protokolu. Jakmile je aktivována dvouvodičová varianta přechází stavový automat do stavu \textbf{S\_nTDI}. V tomto stavu je navzorkována hodnota TDI na TMSC pinu, přičemž hodnota je negována dle specifikace formátu OSCAN1. S dalším sestupnou hranou hodinového signálu přechází automat do stavu \textbf{S\_TMS}, kdy se vzorkuje hodnota TMS. Následuje přechod do posledního stavu \textbf{S\_TDO}, který povoluje signálem \textit{tck\_en\_2w} propagaci hodinového signálu TCKC pro další zpracování. Dále je také na interní signál \textit{tmsc\_oen\_i}, povolující výstup pinu, přiřazena hodnota z převedeného čtyřvodičového rozhraní. Stavy \textbf{S\_nTDI},\textbf{S\_TMS} a \textbf{S\_TDO} se cyklicky opakují dokud není protokol přepnutý na čtyřvodičovou variantu nebo je zahájena aktivační sekvence.
+
+\begin{figure}[!h]
+  \begin{center}
+    \includegraphics[scale=0.78]{obrazky/cJTAG_oscan1_fsm.pdf}
+  \end{center}
+  \caption{Stavový diagram stavového automatu pro implementaci serializace signálů na pinu TMSC.}
+	\label{fig:cJTAG_oscan1_fsm}
 \end{figure}
