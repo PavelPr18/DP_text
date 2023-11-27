@@ -4,7 +4,7 @@
 \chapter{Návrh a implementace modulu pro dvouvodičový JTAG protokol}
 Tato kapitola popisuje princip fungování dvouvodičového \acs{JTAG} protokolu a způsoby jeho aktivace.
 
-\section{Účel redukce počet pinů \acs{JTAG} rozhraní}	\label{sec:2w_interface}
+\section{Účel redukce počtu pinů \acs{JTAG} rozhraní}	\label{sec:2w_interface}
 Důvodem pro snížení počtu pinů potřebných pro testování integrovaných obvodů je možnost využít dva volné piny k jinému účelu během testování, například pro jejich běžnou funkci, kterou mají mimo testovací režim. Dvouvodičové \acs{JTAG} rozhraní je definováno standardem IEEE 1149.7 a je nazýváno \textbf{compact \acs{JTAG}} (c\acs{JTAG}). Dvouvodičové rozhraní využívá ke komunikaci piny \acs{TCK} a \acs{TMS}, které mají pro dvouvodičovou variantu označení s příponou C (compact), tedy TCKC a TMSC. \cite{IEEE_1149-7} \cite{JTAG}
 
 Dvouvodičová varianta podporuje zapojení ve hvězdicové topologii jak je vidět na obrázku \ref{fig:star2_sch}. Nicméně návrh modulu popisovaného v této kapitole se omezuje pouze na jedno zařízení, protože funkcionalita podporující připojení více zařízení do hvězdicové topologie není implementována.
@@ -158,7 +158,21 @@ Navržený obvod pro detekci aktivační sekvence a převod vstupních signálů
 %TODO: - nakreslit blok a v nem muxování a clk gating 
 %			- zduraznit ze to nema rychlejsi hod signal
 %			- výchozí stav je 4 protoze... 			
+Navržený obvod je obecně zobrazen na obrázku \ref{fig:cJTAG_bridge}, kde je možné vidět princip převodu mezi čtyřvodičovou variantou \acs{JTAG} rozhraní a čtyř nebo dvouvodičovou variantou na vstupně/výstupních pinech čipu. Jakmile je přijata aktivační sekvence je obvodem nastaven signál \textit{jtag\_2w\_en} podle vybrané varianty protokolu. Pokud je vybrána čtyřvodičová varianta (\textit{jtag\_2w\_en = 0}) jsou signály vstupního rozhraní pouze propojeny skrz tento modul. Pro signály TDI, TMS a TDO\_OEN je tak docíleno pomocí multiplexorů. Hodinový signál TCK je propagován dále do obvodu prostřednictvím buňky pro "clock gating", nastavením povolovacího signálu \textit{tckc\_en}. Vstupně/výstupní pin TMSC je v případě čtyřvodičové varianty rozdělen na vstup TMS a výstup TDO, což je řízeno dle hodnoty výstupního signálu \textit{jtag\_2w\_en} bloku \textit{cJTAG\_adapter}. Na obrázku je pin označen TMS(C)/TDO, čímž je naznačeno rozdělení pinů dle vybrané varianty. Výstupy modulu \textit{tmsc\_tdo\_out} a \textit{tmsc\_tdo\_oen} nesou tedy společnou funkci pro TMSC a TDO signály.
 
+V případě výběru dvouvodičové varianty jsou multiplexory přepnuty na interní signály, které jsou generované dle formátu serializace dat na TMSC pin uvedeného v podkapitole \ref{sec:oscan1}. Signály \textit{tms\_4w\_i} a \textit{tdi\_4w\_i} jsou navzorkovány nástupnou hranou TCKC hodinového signálu, dle aktuálního stavu stavového automatu popsaného v podkapitole \ref{subsec:oscan1_fsm}. Hodinový signál TCK je propagován nastavením povolovacího signálu \textit{tckc\_en} pouze v rámci posledního bitu (TDO) formátu OSCAN1. Aby bylo docíleno buzení TMSC pinu pouze po dobu poloviny periody hodinového signálu, jak je popsáno v podkapitole \ref{subsec:oscan1_drive}, musí být výstup \textit{tmsc\_tdo\_oen} deaktivován s nástupnou hranou hodinového signálu TCKC. Pro docílení této funkcionality je na obrázku naznačena část s klopným obvodem a logickým hradlem AND. Signál \textit{tmsc\_oen\_i} je výstupem stavového automatu popsaného v podkapitole \ref{subsec:oscan1_fsm}.
+
+Výchozím stavem modulu je varianta čtyřvodičové komunikace, přičemž veškeré části obvodu jsou po uvolnění asynchronního resetu TRST\_N nastaveny jakoby aktivační sekvence této varianty již proběhla. Důvodem pro volbu této varianty je především zachování stávající funkcionality obvodu při použití stávajících ladících nástrojů. To je také důvodem proč není vyžadováno odeslání aktivační sekvence, jelikož není ve stávajícím debuggeru implmentována.
+
+Navržený obvod je taktován pouze testovacím hodinovým signálem TCKC a není tak třeba ošetřovat přechody mezi hodinovými doménami. Toto řešení ovšem přineslo při návrhu nemožnost využít vyšší hodinové frekvence k vzorkování hodnot na signálech \acs{JTAG} rozhraní, což je vidět například na části obvodu pro detekci úvodní sekvence, jejíž schéma je vidět na obrázku \ref{fig:cJTAG_escape_circuit}, kde se pro detekci pulsů na TMSC pinu využívá použití TMSC jako hodinového signálu pro některé klopné obvody.
+
+\begin{figure}[!h]
+  \begin{center}
+    \includegraphics[scale=0.76]{obrazky/cJTAG_bridge.pdf}
+  \end{center}
+  \caption{Principiální schéma navrženého modulu pro převod na čtyřvodičové \acs{JTAG} rozhraní.}
+	\label{fig:cJTAG_bridge}
+\end{figure}
 
 \subsection{Detekce úvodní sekvence pro přepnutí JTAG protokolu}	\label{subsec:sel_escape_det}
 Pro detekci sekvence určené pro přepínání mezi dvou a čtyřvodičovou variantou \acs{JTAG} protokolu, popsané v kapitole \ref{subsec:sel_escape}, byl navržen obvod jehož schéma je zobrazeno na obrázku \ref{fig:cJTAG_escape_circuit}. Tato implementace obvodu pro detekci byla inspirována, příkladem možné implementace uvedeném ve standardu IEEE 1149.7.
