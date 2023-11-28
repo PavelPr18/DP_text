@@ -5,29 +5,29 @@
 \contentsline {chapter}{Úvod}{12}{section*.6}%
 \contentsline {chapter}{\numberline {1}Komunikační protokol JTAG}{13}{chapter.8}%
 \contentsline {section}{\numberline {1.1}Základní popis}{13}{section.9}%
-\contentsline {section}{\numberline {1.2}Stavový automat - \acs {TAP}}{13}{section.10}%
+\contentsline {section}{\numberline {1.2}Řídicí stavový automat - \acs {TAP}}{13}{section.10}%
 \contentsline {section}{\numberline {1.3}Systém pro testování \acs {RISC-V}}{14}{section.13}%
 \contentsline {subsection}{\numberline {1.3.1}\acs {DMI}}{15}{subsection.16}%
 \contentsline {subsection}{\numberline {1.3.2}Přístup na systémovou sběrnici pomocí Debug modulu}{15}{subsection.17}%
 \contentsline {section}{\numberline {1.4}Systémová sběrnice PULP RICS-V}{15}{section.18}%
 \contentsline {subsection}{\numberline {1.4.1}Signály systémové sběrnice}{16}{subsection.19}%
 \contentsline {subsection}{\numberline {1.4.2}Průběh přístupu na systémovou sběrnici}{16}{subsection.22}%
-\contentsline {chapter}{\numberline {2}Návrh a implementace modulu pro dvouvodičový JTAG protokol}{18}{chapter.25}%
-\contentsline {section}{\numberline {2.1}Účel redukce počet pinů \acs {JTAG} rozhraní}{18}{section.26}%
+\contentsline {chapter}{\numberline {2}Návrh a implementace modulu pro dvouvodičový \acs {JTAG} protokol}{18}{chapter.25}%
+\contentsline {section}{\numberline {2.1}Účel redukce počtu pinů \acs {JTAG} rozhraní}{18}{section.26}%
 \contentsline {section}{\numberline {2.2}Serializace signálů čtyřvodičového \acs {JTAG} rozhraní na dvouvodičové}{19}{section.29}%
-\contentsline {subsection}{\numberline {2.2.1}Řízení úrovně na TMSC pinu}{19}{subsection.32}%
-\contentsline {section}{\numberline {2.3}Aktivační sekvence dvouvodičové varianty JTAG protokolu}{19}{section.35}%
-\contentsline {subsection}{\numberline {2.3.1}Úvodní sekvence pro přepnutí na jinou variantu JTAG protokolu}{20}{subsection.38}%
-\contentsline {subsection}{\numberline {2.3.2}Sekvence pro výběr varianty JTAG protokolu}{21}{subsection.39}%
+\contentsline {subsection}{\numberline {2.2.1}Řízení úrovně na \acs {TMSC} pinu}{19}{subsection.32}%
+\contentsline {section}{\numberline {2.3}Aktivační sekvence dvouvodičové varianty \acs {JTAG} protokolu}{20}{section.35}%
+\contentsline {subsection}{\numberline {2.3.1}Úvodní sekvence pro přepnutí varianty \acs {JTAG} protokolu}{20}{subsection.38}%
+\contentsline {subsection}{\numberline {2.3.2}Sekvence pro výběr varianty \acs {JTAG} protokolu}{21}{subsection.39}%
 \contentsline {subsubsection}{Část pro výběr konkrétní čtyř nebo dvouvodičové varianty - \acs {OAC}}{21}{section*.42}%
-\contentsline {subsubsection}{Část rozšiřující informace o výběru varianty - \acs {EC}}{21}{section*.45}%
+\contentsline {subsubsection}{Část rozšiřující informace o výběru varianty - \acs {EC}}{22}{section*.45}%
 \contentsline {subsubsection}{Kontrolní část - \acs {CP}}{22}{section*.46}%
-\contentsline {section}{\numberline {2.4}Implementace modulu pro dvouvodičový JTAG protokol}{23}{section.53}%
-\contentsline {subsection}{\numberline {2.4.1}Základní popis návrhu}{23}{subsection.54}%
-\contentsline {subsection}{\numberline {2.4.2}Detekce úvodní sekvence pro přepnutí JTAG protokolu}{25}{subsection.57}%
-\contentsline {subsection}{\numberline {2.4.3}Zpracování sekvence pro výběr varianty JTAG protokolu}{26}{subsection.60}%
-\contentsline {subsubsection}{Část obvodu pro výběr konkrétní čtyř nebo dvouvodičové varianty a rozšiřující části}{27}{section*.61}%
-\contentsline {subsubsection}{Část obvodu pro pro zpracování kontrolní části aktivační sekvence}{27}{section*.64}%
+\contentsline {section}{\numberline {2.4}Implementace modulu pro dvouvodičový \acs {JTAG} protokol}{23}{section.53}%
+\contentsline {subsection}{\numberline {2.4.1}Základní popis návrhu}{24}{subsection.54}%
+\contentsline {subsection}{\numberline {2.4.2}Detekce úvodní sekvence pro přepnutí \acs {JTAG} protokolu}{25}{subsection.57}%
+\contentsline {subsection}{\numberline {2.4.3}Zpracování sekvence pro výběr varianty \acs {JTAG} protokolu}{27}{subsection.60}%
+\contentsline {subsubsection}{Část obvodu pro výběr konkrétní dvou nebo čtyřvodičové varianty a rozšiřující části}{27}{section*.61}%
+\contentsline {subsubsection}{Část obvodu pro pro zpracování kontrolní části aktivační sekvence}{28}{section*.64}%
 \contentsline {subsection}{\numberline {2.4.4}Stavový automat pro serializaci signálů čtyřvodičového rozhraní}{30}{subsection.67}%
 \contentsline {chapter}{\numberline {3}Návrh a implementace rozšiřujícího modulu pro přístup na systémovou sběrnici pomocí JTAG protokolu}{32}{chapter.70}%
 \contentsline {section}{\numberline {3.1}Návrh časově optimalizovaného protokolu pro přístup na systémovou sběrnici}{32}{section.71}%
