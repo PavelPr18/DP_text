@@ -242,3 +242,8 @@ Výchozím stavem je stav \textbf{S\_IDLE}, ve kterém automat setrvává a je d
   \caption{Stavový diagram stavového automatu pro implementaci serializace signálů na pinu \acs{TMSC}.}
 	\label{fig:cJTAG_oscan1_fsm}
 \end{figure}
+
+\section{Zhodnocení návrhu modulu pro dvouvodičový \acs{JTAG} protokol}
+V této kapitole byl popsán formát přenosu dat přes dvouvodičové \acs{JTAG} rozhraní, popsána definice aktivační sekvence pro deaktivování probíhající komunikace a výběr jednotlivých variant \acs{JTAG} rozhraní definovaná standardem IEEE 1149.7. V rámci popisu možností byly zdůrazněny vlastnosti implementované v rámci této práce, přičemž standard IEEE 1149.7. definuje mnoho dalších možností. Dle standardu by byl návrh celého systému výrazně komplexnější a velmi náročný na implementaci. Pro implementaci byla tedy zvolena podpora dvouvodičového \acs{JTAG} rozhraní ve formátu OSCAN1 a možnost přepnou mezi dvou a čtyřvodičovým rozhraním. Zapojení do hvězdicové topologie, resetování v rámci deaktivační sekvence nebo pomocí hodnoty kontrolní části aktivační sekvence, jiné formáty serializace dat a další funkce definované standardem nebyly implementovány z důvodu jejich nepotřebnosti. \cite{IEEE_1149-7}
+
+Navržený modul byl implementován jako převodník \acs{JTAG} rozhraní na původní čtyřvodičovou variantu a je taktován pouze hodinovým signálem \acs{TCKC} generovaným debuggerem. Toto řešení vyžadovalo poměrně malý zásah do stávajícího obvodu a díky výchozímu čtyřvodičovému rozhraní, nemá rozšíření systému vliv na stávající funkcionalitu.

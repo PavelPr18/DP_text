@@ -29,18 +29,19 @@
 \contentsline {subsubsection}{Část obvodu pro výběr konkrétní dvou nebo čtyřvodičové varianty a rozšiřující části}{27}{section*.61}%
 \contentsline {subsubsection}{Část obvodu pro pro zpracování kontrolní části aktivační sekvence}{28}{section*.64}%
 \contentsline {subsection}{\numberline {2.4.4}Stavový automat pro serializaci signálů čtyřvodičového rozhraní}{30}{subsection.67}%
-\contentsline {chapter}{\numberline {3}Návrh a implementace rozšiřujícího modulu pro přístup na systémovou sběrnici pomocí JTAG protokolu}{32}{chapter.70}%
-\contentsline {section}{\numberline {3.1}Návrh časově optimalizovaného protokolu pro přístup na systémovou sběrnici}{32}{section.71}%
-\contentsline {subsection}{\numberline {3.1.1}Zkrácení adresy a přenášených dat}{32}{subsection.72}%
-\contentsline {subsection}{\numberline {3.1.2}Busy-wait varianta protokolu}{33}{subsection.73}%
-\contentsline {subsubsection}{Busy-wait mód - zápis}{33}{section*.78}%
-\contentsline {subsubsection}{Busy-wait mód - čtení}{34}{section*.81}%
-\contentsline {subsection}{\numberline {3.1.3}Dynamic-wait varianta protokolu}{35}{subsection.84}%
-\contentsline {subsubsection}{Dynamic-wait mód - zápis}{35}{section*.85}%
-\contentsline {subsubsection}{Dynamic-wait mód - čtení}{36}{section*.88}%
-\contentsline {section}{\numberline {3.2}Implementace}{37}{section.91}%
-\contentsline {subsection}{\numberline {3.2.1}Busy-wait mód}{37}{subsection.92}%
-\contentsline {chapter}{Závěr}{38}{section*.96}%
-\contentsline {chapter}{Literatura}{39}{section*.98}%
-\contentsline {chapter}{Seznam symbol\r {u} a zkratek}{40}{section*.100}%
-\contentsline {chapter}{Seznam p\v {r}\'{\i }loh}{42}{section*.102}%
+\contentsline {section}{\numberline {2.5}Zhodnocení návrhu modulu pro dvouvodičový \acs {JTAG} protokol}{32}{section.70}%
+\contentsline {chapter}{\numberline {3}Návrh a implementace rozšiřujícího modulu pro přístup na systémovou sběrnici pomocí JTAG protokolu}{33}{chapter.71}%
+\contentsline {section}{\numberline {3.1}Návrh časově optimalizovaného protokolu pro přístup na systémovou sběrnici}{33}{section.72}%
+\contentsline {subsection}{\numberline {3.1.1}Zkrácení adresy a přenášených dat}{33}{subsection.73}%
+\contentsline {subsection}{\numberline {3.1.2}Busy-wait varianta protokolu}{34}{subsection.74}%
+\contentsline {subsubsection}{Busy-wait mód - zápis}{34}{section*.79}%
+\contentsline {subsubsection}{Busy-wait mód - čtení}{35}{section*.82}%
+\contentsline {subsection}{\numberline {3.1.3}Dynamic-wait varianta protokolu}{36}{subsection.85}%
+\contentsline {subsubsection}{Dynamic-wait mód - zápis}{36}{section*.86}%
+\contentsline {subsubsection}{Dynamic-wait mód - čtení}{37}{section*.89}%
+\contentsline {section}{\numberline {3.2}Implementace}{38}{section.92}%
+\contentsline {subsection}{\numberline {3.2.1}Busy-wait mód}{38}{subsection.93}%
+\contentsline {chapter}{Závěr}{39}{section*.97}%
+\contentsline {chapter}{Literatura}{40}{section*.99}%
+\contentsline {chapter}{Seznam symbol\r {u} a zkratek}{41}{section*.101}%
+\contentsline {chapter}{Seznam p\v {r}\'{\i }loh}{43}{section*.103}%
