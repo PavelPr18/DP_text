@@ -1,12 +1,13 @@
 \chapter{Komunikační protokol JTAG}
 Tato kapitola popisuje princip přenosu dat na pomocí komunikačního protokolu JTAG a jeho použití pro testování obvodů s procesorem architektury \acs{RISC-V} (\acl{RISC-V}).
 
-\section{Základní popis}
+\section{Základní popis \acs{JTAG} protokolu}
 \acs{JTAG} (\acl{JTAG}) je standardizovaná komunikační sběrnice určená pro testování integrovaných obvodů a \acs{DPS} (\acl{DPS}).
 \acs{JTAG} rozhraní definuje tzv. \acs{TAP} (\acl{TAP}), který je skupinou vstupů a výstupů určených k testování. Jelikož \acs{JTAG} je synchronní sběrnice, její rozhraní zahrnuje samostatný vodič pro hodinový signál \textbf{\acs{TCK}} (\acl{TCK}). Dalším vodičem je \textbf{\acs{TMS}} (\acl{TMS}), kterým je přenášen řídicí signál pro stavový automat. Vodiče zajišťující přenos dat jsou označeny \textbf{\acs{TDI}} (\acl{TDI}) a \textbf{\acs{TDO}} (\acl{TDO}). Jako volitelný vodič základního rozhraní je možné připojit také \textbf{\acs{TRST}} (\acl{TRST}), který provádí reset stavového automatu. Reset se využívá především k inicializaci automatu během připojení napájení. \cite {IEEE_1149-1} \cite{JTAG}      
 
 \section{Řídicí stavový automat - \acs{TAP}}
-Standard IEEE 1149.1 definuje stavový automat, který je hlavní součástí \acs{TAP} (\acl{TAP}). Stavový diagram stavového automatu je zobrazen na obrázku \ref{fig:tap_controller}. Všechny přechody mezi stavy toho automatu jsou plně synchronní se vstupním hodinovým signálem \acs{TCK} a jsou určeny řídicím signálem \acs{TMS}. Důležitou vlastností tohoto stavového automatu je způsob resetování jeho stavu, tedy návrat do stavu \textbf{Test-Logic-Reset}. Reset lze provést pomocí minimálně pěti po sobě jdoucích hodinových taktů, kdy hodnota řídicího signálu \acs{TMS} setrvává v log. 1. Tento způsob resetování je možný provést ze kteréhokoliv stavu automatu. Příkladem může být provedení resetu, když se automat nachází ve stavu \textbf{Shift-DR}. Automat tedy projde postupně stavy \textbf{Exit1-DR}, \textbf{Update-DR}, \textbf{Select-DR-Scan} a \textbf{Select-DR-Scan} až do stavu \textbf{Test-Logic-Reset}. V případě kratší cesty do \textbf{Test-Logic-Reset} stavu setrvává při hodnotě log. 1 na signálu \acs{TMS} v tomto stavu.
+Standard IEEE 1149.1 definuje stavový automat, který je hlavní součástí \acs{TAP} (\acl{TAP}). Stavový diagram stavového automatu je zobrazen na obrázku \ref{fig:tap_controller}. Všechny přechody mezi stavy toho automatu jsou plně synchronní se vstupním hodinovým signálem \acs{TCK} a jsou určeny řídicím signálem \acs{TMS}. Důležitou vlastností tohoto stavového automatu je způsob resetování jeho stavu, tedy návrat do stavu \textbf{Test-Logic-Reset}. Reset lze provést pomocí minimálně pěti po sobě jdoucích hodinových taktů, kdy hodnota řídicího signálu \acs{TMS} setrvává v log. 1. Tento způsob resetování je možný provést ze kteréhokoliv stavu automatu. Příkladem může být provedení resetu, když se automat nachází ve stavu \textbf{Shift-DR}. Automat tedy projde postupně stavy \textbf{Exit1-DR}, \textbf{Update-DR}, \textbf{Select-DR-Scan} a \textbf{Select-DR-Scan} až do stavu \textbf{Test-Logic-Reset}. V případě kratší cesty do \textbf{Test-Logic-Reset} stavu setrvává při hodnotě log. 1 na signálu \acs{TMS} v tomto stavu. Hlavními stavy při kterých probíhá přenos signály \acs{TDI} a \acs{TDO} jsou \textbf{Shift-DR} a \textbf{Shift-IR}, tedy přenos dat a instrukce. \cite {IEEE_1149-1}
+
 \begin{figure}[H]
   \begin{center}
     \includegraphics[scale=0.34]{obrazky/JTAG_TAP_Controller_State_Diagram.png}
@@ -16,25 +17,86 @@ Standard IEEE 1149.1 definuje stavový automat, který je hlavní součástí \a
 \end{figure}
 
 \section{Systém pro testování \acs{RISC-V}}		\label{sec:risc-v_dbg}
-Pro procesory architektury \acs{RISC-V} je definován systém pro jejich testování a ladění. Blokové schéma systému je zobrazené na obrázku \ref{fig:blok_sch_risc-v_dbg}. Nadřazeným systémem je dle schématu pro testování integrovaných je \textbf{debugger}, kterým je zpravidla testovací software v PC. Pro jeho spojení s integrovaným obvodem je třeba zpravidla použít převodník z USB na JTAG protokol. Systém pro přístup k procesorovému jádru se nazývá \ac{DM}. Součástí Debug modulu je blok realizující přístup na systémovou sběrnici (System Bus Access), který je popsaný v podkapitole \ref{subsec:dm_sba}. Přechod mezi hodinovými doménami \acs{JTAG}u a systémové sběrnice v tomto systému realizuje rozhraní \ac{DMI}. \cite{risc-v_dbg}
+Pro procesory architektury \acs{RISC-V} je definován systém pro jejich testování a ladění, dle specifikace \textit{RISC-V External Debug Support}. Blokové schéma systému je zobrazené na obrázku \ref{fig:blok_sch_risc-v_dbg}. Nadřazeným systémem pro testování integrovaných je dle schématu \textbf{debugger}, kterým je zpravidla testovací software v PC. Pro jeho spojení s integrovaným obvodem je třeba zpravidla použít převodník z USB na JTAG protokol. Systém pro přístup k procesorovému jádru se nazývá \ac{DM}. Součástí Debug modulu je blok realizující přístup na systémovou sběrnici (System Bus Access), který je popsaný v podkapitole \ref{subsec:dm_sba}. Přechod mezi hodinovými doménami \acs{JTAG} rozhraní a systémové sběrnice v tomto systému realizuje rozhraní \ac{DMI}. \cite{risc-v_dbg}
 
-
-Systém umožňuje vykonávat krátký program 
+%Systém umožňuje vykonávat krátký program 
 
 \begin{figure}[!h]
   \begin{center}
-    \includegraphics[scale=0.65]{obrazky/risc-v_debug_system_blok_sch.png}
+    \includegraphics[scale=0.85]{obrazky/risc-v_debug_system_blok_sch.png}
   \end{center}
   \caption{Blokové schéma systému použitého pro testování \acs{RISC-V} procesorů \cite{risc-v_dbg}}
 	\label{fig:blok_sch_risc-v_dbg}
 \end{figure}
 
-\subsection{\acs{DMI}}		\label{subsec:dmi}
+\subsection{Přístup k registrům testovacího systému}		\label{subsec:dm_reg_access}
+Modul sloužící k ladění procesorového jádra (\acl{DM}) obsahuje sadu 32-bitových registrů. sloužících k . K těmto registrům může debugger přistoupit prostřednictvím \acs{JTAG} protokolu a následně \acs{DMI} rozhraní, jak je možné vidět na blokovém schématu \ref{fig:blok_sch_risc-v_dbg}. Rozhraní \acs{DMI} je definováno jako 41-bitový registr, který obsahuje 7-bitovou adresu registru, data pro zápis či čtení z registru a dvoubitovou hodnotu \textit{op} (operace). Bitová pole registru jsou znázorněna tabulkou \ref{tab:dmi_access}.   \cite{risc-v_dbg}
+
+Tento registr funguje jako posuvný registr pro komunikaci prostřednictvím \acs{JTAG} protokolu. Pro aktivaci přístupu k registrů popisovaným způsobem je třeba přepnout instrukci zápisem hodnoty 0x11 do instrukčního registru. Poté může debugger zahájit komunikaci přechodem stavového automatu do stavu \textit{Shift-DR} a přenosem požadované hodnoty do posuvného registru. Přičemž zpracování požadavku je vždy zahájeno přechodem do stavu \textit{Capture-DR}.
+
+\begin{table}[!h]
+  \caption{Formát registru pro přístup k registrům testovacího systému. \cite{risc-v_dbg}}
+  \begin{center}
+  	\small
+	  \begin{tabular}{!{\vrule width 1.2pt}c|c|c!{\vrule width 1.2pt}}
+	    \noalign{\hrule height 1.2pt}
+				address [7] & data [32] & op [2]\\
+			\noalign{\hrule height 1.2pt}
+		\end{tabular}
+  \end{center}
+	\label{tab:dmi_access}
+\end{table}
+
+\subsubsection{Význam hodnoty operace pro přístup k registrům testovacího systému}
+
+\begin{table}[!h]
+  \caption{Tabulka možných hodnot operace registru \acs{DMI} rozhraní. \cite{risc-v_dbg}}
+  \begin{center}
+  	\small
+	  \begin{tabular}{!{\vrule width 1.2pt}M{1.5cm}|M{2.5cm}|M{9cm}!{\vrule width 1.2pt}}
+	    \noalign{\hrule height 1.2pt}
+	    op & Význam & Popis\\
+	    \noalign{\hrule height 1.2pt}
+	    0 & nop & Následující data a adresa jsou ignorovány\\
+			\hline	    
+			1 & read & Čtení hodnoty registru z adresy\\
+			\hline
+			2 & write & Zápis přijatých dat na registr\\
+			\hline	    
+			3 & res & Rezervováno pro budoucí využití\\
+			\hline
+			\noalign{\hrule height 1.2pt}
+		\end{tabular}
+  \end{center}
+	\label{tab:dmi_access_op}
+\end{table}
+
+\begin{table}[!h]
+  \caption{Tabulka možných návratových hodnot operace registru \acs{DMI} rozhraní. \cite{risc-v_dbg}}
+  \begin{center}
+  	\small
+	  \begin{tabular}{!{\vrule width 1.2pt}M{1.5cm}|M{2.5cm}|M{9cm}!{\vrule width 1.2pt}}
+	    \noalign{\hrule height 1.2pt}
+	    op & Význam & Popis\\
+	    \noalign{\hrule height 1.2pt}
+	    0 & ok & Předchozí operace proběhla v pořádku\\
+			\hline	    
+			1 & res & Rezervováno pro budoucí využití\\
+			\hline
+			2 & err & Chyba Debug modulu\\
+			\hline	    
+			3 & busy & Předchozí operace stále probíhá\\
+			\hline
+			\noalign{\hrule height 1.2pt}
+		\end{tabular}
+  \end{center}
+	\label{tab:dmi_access_op_response}
+\end{table}
 
 \subsection{Přístup na systémovou sběrnici pomocí Debug modulu}		\label{subsec:dm_sba}
 Pro přístup	na systémovou sběrnici jsou v debug modulu vyhrazeny registry 			. \cite{risc-v_dbg}
 
-\section{Systémová sběrnice PULP RICS-V}
+\section{Systémová sběrnice PULP RISC-V}
 Jako procesorové jádro je v integrovaném obvodu, pro který je rozšíření JTAG front-endu navrženo, použito procesorové jádro typu \acs{RISC-V}. Konkrétní typ procesorového jádra je použit \acs{PULP} (\acl{PULP}) C32E40P 32-bitový procesor. Předchozí verze jádra je nazvána RI5CY. Rozdíly mezi těmito verzemi nejsou pro popis systémové sběrnice a návrh rozšiřujícího JTAG front-endu podstatné, proto je možné se v této práci odkazovat na starší verzi RI5CY. Systémová sběrnice tohoto procesorového jádra je založena na jednoduchém \textbf{Request-Grant} protokolu. Na sběrnici mohou být obecně připojeni \textit{master} a \textit{slave} moduly. V tomto případě bude uvažován jako master modul navržený modul rozšiřující JTAG front-end a jako slave například paměť.
 
 \subsection{Signály systémové sběrnice}

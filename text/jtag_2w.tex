@@ -109,7 +109,7 @@ Poslední část aktivační sekvence slouží k prodloužení sekvence ze stran
 Formát této části sekvence je zobrazen v tabulce \ref{tab:cJTAG_sel_cp}. Jednobitová hodnota první části \textit{Preamble} je \acs{JTAG} systémem ignorována a na její hodnotě nezáleží. Nicméně je doporučeno, aby byla tato hodnota stejná jako hodnota prvního bitu následující části \textit{Body}. Tato perioda hodinového signálu \acs{TCKC} může sloužit debuggeru jako čas pro změnu zdroje buzení \acs{TMSC} pinu. Následuje část těla kontrolní části sekvence, která může nabývat hodnot dle tabulky \ref{tab:cp_body}, kde je definován také význam těchto hodnot. Poslední částí je jednobitová hodnota \textit{Postamble}, která je \acs{JTAG} systémem také ignorována, přičemž je doporučeno použít stejnou hodnotu jako poslední bit části \textit{Body}. \cite{IEEE_1149-7}              
 
 \begin{table}[H]
-  \caption{Formát kontrolní části sekvence pro výběr varianty \acs{JTAG} protokolu \cite{IEEE_1149-7}}
+  \caption{Formát kontrolní části sekvence pro výběr varianty \acs{JTAG} protokolu. \cite{IEEE_1149-7}}
   \begin{center}
   	\small
 	  \begin{tabular}{!{\vrule width 1.2pt}c|c|c!{\vrule width 1.2pt}}
@@ -211,7 +211,7 @@ Hodnota přijatá posuvným registrem je porovnávána se dvěma konstantami, kt
 	\label{fig:cJTAG_sel_oac_ec_circuit}
 \end{figure}
 
-\subsubsection{Část obvodu pro pro zpracování kontrolní části aktivační sekvence}
+\subsubsection{Část obvodu pro zpracování kontrolní části aktivační sekvence}
 Pro poslední část aktivační sekvence byl navržen a implementován obvod zobrazený na obrázku \ref{fig:cJTAG_sel_cp_circuit}. Popsaný obvod podporuje prodloužení sekvence při příjmu hodnoty CP\_NOP a následné ukončení sekvence hodnotou CP\_END, které jsou definované v tabulce \ref{tab:cp_body}. % Nejkratší možnou variantou kontrolní části aktivační sekvence je 
 
 Obvod na obrázku je aktivován jakmile předcházející část obvodu uvedená na obrázku \ref{fig:cJTAG_sel_oac_ec_circuit} vyhodnotí shodu hodnoty s jednou z konstant pro výběr varianty \acs{JTAG} protokolu (nastaví se signál \textit{sel\_seq\_match}). V tomto hodinovém taktu je povolen 2 a 3-bitový posuvný registr signálem \textit{CE}. Dvoubitový posuvný registr, jehož vstupem je signál \acs{TMSC}, slouží k vyhodnocení hodnoty CP\_END. Jakmile je hodnota tohoto posuvného registru 00, což odpovídá hodnotě CP\_END ukončující sekvenci, je výstupem logické funkce \textit{NOR} log. 1.
