@@ -2,37 +2,37 @@
 Tato kapitola popisuje princip přenosu dat na pomocí komunikačního protokolu JTAG a jeho použití pro testování obvodů s procesorem architektury \acs{RISC-V} (\acl{RISC-V}).
 
 \section{Základní popis \acs{JTAG} protokolu}
-\acs{JTAG} (\acl{JTAG}) je standardizovaná komunikační sběrnice určená pro testování integrovaných obvodů a \acs{DPS} (\acl{DPS}).
-\acs{JTAG} rozhraní definuje tzv. \acs{TAP} (\acl{TAP}), který je skupinou vstupů a výstupů určených k testování. Jelikož \acs{JTAG} je synchronní sběrnice, její rozhraní zahrnuje samostatný vodič pro hodinový signál \textbf{\acs{TCK}} (\acl{TCK}). Dalším vodičem je \textbf{\acs{TMS}} (\acl{TMS}), kterým je přenášen řídicí signál pro stavový automat. Vodiče zajišťující přenos dat jsou označeny \textbf{\acs{TDI}} (\acl{TDI}) a \textbf{\acs{TDO}} (\acl{TDO}). Jako volitelný vodič základního rozhraní je možné připojit také \textbf{\acs{TRST}} (\acl{TRST}), který provádí reset stavového automatu. Reset se využívá především k inicializaci automatu během připojení napájení. \cite {IEEE_1149-1} \cite{JTAG}      
+\acs{JTAG} (\textit{\acl{JTAG}}) je standardizovaná komunikační sběrnice určená pro testování integrovaných obvodů a \acs{DPS} (\textit{\acl{DPS}}).
+\acs{JTAG} rozhraní definuje tzv. \acs{TAP} (\textit{\acl{TAP}}), který je skupinou vstupů a výstupů určených k testování. Jelikož \acs{JTAG} je synchronní sběrnice, její rozhraní zahrnuje samostatný vodič pro hodinový signál \texttt{\acs{TCK}} (\textit{\acl{TCK}}). Dalším vodičem je \texttt{\acs{TMS}} (\textit{\acl{TMS}}), kterým je přenášen řídicí signál pro stavový automat. Vodiče zajišťující přenos dat jsou označeny \texttt{\acs{TDI}} (\textit{\acl{TDI}}) a \texttt{\acs{TDO}} (\textit{\acl{TDO}}). Jako volitelný vodič základního rozhraní je možné připojit také \texttt{\acs{TRST}} (\textit{\acl{TRST}}), který provádí reset stavového automatu. Reset se využívá především k inicializaci automatu během připojení napájení. \cite {IEEE_1149-1} \cite{JTAG}      
 
 \section{Řídicí stavový automat - \acs{TAP}}
-Standard IEEE 1149.1 definuje stavový automat, který je hlavní součástí \acs{TAP} (\acl{TAP}). Stavový diagram stavového automatu je zobrazen na obrázku \ref{fig:tap_controller}. Všechny přechody mezi stavy toho automatu jsou plně synchronní se vstupním hodinovým signálem \acs{TCK} a jsou určeny řídicím signálem \acs{TMS}. Důležitou vlastností tohoto stavového automatu je způsob resetování jeho stavu, tedy návrat do stavu \textbf{Test-Logic-Reset}. Reset lze provést pomocí minimálně pěti po sobě jdoucích hodinových taktů, kdy hodnota řídicího signálu \acs{TMS} setrvává v log. 1. Tento způsob resetování je možný provést ze kteréhokoliv stavu automatu. Příkladem může být provedení resetu, když se automat nachází ve stavu \textbf{Shift-DR}. Automat tedy projde postupně stavy \textbf{Exit1-DR}, \textbf{Update-DR}, \textbf{Select-DR-Scan} a \textbf{Select-DR-Scan} až do stavu \textbf{Test-Logic-Reset}. V případě kratší cesty do \textbf{Test-Logic-Reset} stavu setrvává při hodnotě log. 1 na signálu \acs{TMS} v tomto stavu. Hlavními stavy při kterých probíhá přenos signály \acs{TDI} a \acs{TDO} jsou \textbf{Shift-DR} a \textbf{Shift-IR}, tedy přenos dat a instrukce. \cite {IEEE_1149-1}
+Standard IEEE 1149.1 definuje stavový automat, který je hlavní součástí \acs{TAP} (\textit{\acl{TAP}}). Stavový diagram stavového automatu je zobrazen na obrázku \ref{fig:tap_controller}. Všechny přechody mezi stavy toho automatu jsou plně synchronní se vstupním hodinovým signálem \texttt{\acs{TCK}} a jsou určeny řídicím signálem \texttt{\acs{TMS}}. Důležitou vlastností tohoto stavového automatu je způsob resetování jeho stavu, tedy návrat do stavu \textit{Test-Logic-Reset}. Reset lze provést pomocí minimálně pěti po sobě jdoucích hodinových taktů, kdy hodnota řídicího signálu \texttt{\acs{TMS}} setrvává v log. \texttt{1}. Tento způsob resetování je možný provést ze kteréhokoliv stavu automatu. Příkladem může být provedení resetu, když se automat nachází ve stavu \textit{Shift-DR}. Automat tedy projde postupně stavy \textit{Exit1-DR}, \textit{Update-DR}, \textit{Select-DR-Scan} a \textit{Select-DR-Scan} až do stavu \textit{Test-Logic-Reset}. V případě kratší cesty do \textit{Test-Logic-Reset} stavu setrvává při hodnotě log. 1 na signálu \texttt{\acs{TMS}} v tomto stavu. Hlavními stavy při kterých probíhá přenos signály \texttt{\acs{TDI}} a \texttt{\acs{TDO}} jsou \textit{Shift-DR} a \textit{Shift-IR}, tedy přenos dat a instrukce. \cite {IEEE_1149-1}
 
 \begin{figure}[H]
   \begin{center}
-    \includegraphics[scale=0.34]{obrazky/JTAG_TAP_Controller_State_Diagram.png}
+    \includegraphics[scale=0.35]{obrazky/JTAG_TAP_Controller_State_Diagram.png}
   \end{center}
   \caption{Stavový diagram řídicího stavového automatu JTAGu \cite{JTAG_TAP_diagram}}
 	\label{fig:tap_controller}
 \end{figure}
 
 \section{Systém pro testování \acs{RISC-V}}		\label{sec:risc-v_dbg}
-Pro procesory architektury \acs{RISC-V} je definován systém pro jejich testování a ladění, dle specifikace \textit{RISC-V External Debug Support}. Blokové schéma systému je zobrazené na obrázku \ref{fig:blok_sch_risc-v_dbg}. Nadřazeným systémem pro testování integrovaných je dle schématu \textbf{debugger}, kterým je zpravidla testovací software v PC. Pro jeho spojení s integrovaným obvodem je třeba zpravidla použít převodník z USB na JTAG protokol. Systém pro přístup k procesorovému jádru se nazývá \ac{DM}. Součástí Debug modulu je blok realizující přístup na systémovou sběrnici (System Bus Access), který je popsaný v podkapitole \ref{subsec:dm_sba}. Přechod mezi hodinovými doménami \acs{JTAG} rozhraní a systémové sběrnice v tomto systému realizuje rozhraní \ac{DMI}. \cite{risc-v_dbg}
+Pro procesory architektury \acs{RISC-V} je definován systém pro jejich testování a ladění, dle specifikace \textit{RISC-V External Debug Support}. Blokové schéma systému je zobrazené na obrázku \ref{fig:blok_sch_risc-v_dbg}. Nadřazeným systémem pro testování integrovaných obvodů je dle schématu \textbf{debugger}, kterým je zpravidla testovací software v PC. Pro jeho spojení s integrovaným obvodem je třeba zpravidla použít převodník z USB na JTAG protokol. Systém pro přístup k procesorovému jádru se nazývá \ac{DM}. Součástí Debug modulu je blok realizující přístup na systémovou sběrnici (\textit{System Bus Access}), který je popsaný v podkapitole \ref{subsec:dm_sba}. Přechod mezi hodinovými doménami \acs{JTAG} rozhraní a systémové sběrnice v tomto systému realizuje rozhraní \ac{DMI}. \cite{risc-v_dbg}
 
 %Systém umožňuje vykonávat krátký program 
 
 \begin{figure}[!h]
   \begin{center}
-    \includegraphics[scale=0.85]{obrazky/risc-v_debug_system_blok_sch.png}
+    \includegraphics[scale=0.9]{obrazky/risc-v_debug_system_blok_sch.png}
   \end{center}
   \caption{Blokové schéma systému použitého pro testování \acs{RISC-V} procesorů \cite{risc-v_dbg}}
 	\label{fig:blok_sch_risc-v_dbg}
 \end{figure}
 
 \subsection{Přístup k registrům testovacího systému}		\label{subsec:dm_reg_access}
-Modul sloužící k ladění procesorového jádra (\acl{DM}) obsahuje sadu 32-bitových registrů. sloužících k . K těmto registrům může debugger přistoupit prostřednictvím \acs{JTAG} protokolu a následně \acs{DMI} rozhraní, jak je možné vidět na blokovém schématu \ref{fig:blok_sch_risc-v_dbg}. Rozhraní \acs{DMI} je definováno jako 41-bitový registr, který obsahuje 7-bitovou adresu registru, data pro zápis či čtení z registru a dvoubitovou hodnotu \textit{op} (operace). Bitová pole registru jsou znázorněna tabulkou \ref{tab:dmi_access}.   \cite{risc-v_dbg}
+Modul sloužící k ladění procesorového jádra (\textit{\acl{DM}}) obsahuje sadu 32-bitových registrů. sloužících k . K těmto registrům může debugger přistoupit prostřednictvím \acs{JTAG} protokolu a následně \acs{DMI} rozhraní, jak je možné vidět na blokovém schématu na obrázku \ref{fig:blok_sch_risc-v_dbg}. Rozhraní \acs{DMI} je definováno jako 41-bitový registr, který obsahuje 7-bitovou adresu zvoleného registru, data pro zápis či čtení z registru a dvoubitovou hodnotu \textit{op} (operace). Bitová pole registru jsou znázorněna tabulkou \ref{tab:dmi_access}.   \cite{risc-v_dbg}
 
-Tento registr funguje jako posuvný registr pro komunikaci prostřednictvím \acs{JTAG} protokolu. Pro aktivaci přístupu k registrů popisovaným způsobem je třeba přepnout instrukci zápisem hodnoty 0x11 do instrukčního registru. Poté může debugger zahájit komunikaci přechodem stavového automatu do stavu \textit{Shift-DR} a přenosem požadované hodnoty do posuvného registru. Přičemž zpracování požadavku je vždy zahájeno přechodem do stavu \textit{Capture-DR}.
+Tento registr funguje jako posuvný registr pro komunikaci prostřednictvím \acs{JTAG} protokolu. Pro aktivaci přístupu k registrům popisovaným způsobem je třeba přepnout instrukci zápisem hodnoty 0x11 do instrukčního registru. Poté může debugger zahájit komunikaci přechodem stavového automatu do stavu \textit{Shift-DR} a odesláním požadované hodnoty do posuvného registru. Přičemž zpracování požadavku je vždy zahájeno přechodem do stavu \textit{Update-DR}.
 
 \begin{table}[!h]
   \caption{Formát registru pro přístup k registrům testovacího systému. \cite{risc-v_dbg}}
@@ -111,21 +111,21 @@ V tabulce \ref{tab:ri5cy_bus} jsou popsány jednotlivé signály systémové sb�
 	    \noalign{\hrule height 1.2pt}
 	    Název signálu & Označení signálu & Počet bitů & Význam signálu\\
 	    \noalign{\hrule height 1.2pt}
-	    Address & addr & 32 & Adresa registru ke kterému se bude přistupovat\\
+	    Address & \texttt{addr} & 32 & Adresa registru ke kterému se bude přistupovat\\
 			\hline
-			Write data & wdata & 32 & Data zapisovaná do registru dle adresy\\
+			Write data & \texttt{wdata} & 32 & Data zapisovaná do registru dle adresy\\
 			\hline
-			Request & req & 1 & Požadavek přístupu na sběrnici\\
+			Request & \texttt{req} & 1 & Požadavek přístupu na sběrnici\\
 			\hline
-			Grant & gnt & 1 & Potvrzení příjmu požadavek přístupu na sběrnici\\
+			Grant & \texttt{gnt} & 1 & Potvrzení příjmu požadavek přístupu na sběrnici\\
 			\hline			
-			Read data valid & rvalid & 1 & Potvrzení platnosti čtených dat\\
+			Read data valid & \texttt{rvalid} & 1 & Potvrzení platnosti čtených dat\\
 			\hline
-			Read data & rdata & 32 & Data čtená z registru dle adresy\\
+			Read data & \texttt{rdata} & 32 & Data čtená z registru dle adresy\\
 			\hline
-			Write enable & we & 1 & Určuje zápis(log. 1)/čtení(log. 0)\\
+			Write enable & \texttt{we} & 1 & Určuje zápis(log. 1)/čtení(log. 0)\\
 			\hline
-			Byte enable & be & 4 & Vybírá bajty, které budou zapsány/čteny\\
+			Byte enable & \texttt{be} & 4 & Vybírá bajty, které budou zapsány/čteny\\
 			\hline
 			\noalign{\hrule height 1.2pt}
 		\end{tabular}
@@ -134,7 +134,7 @@ V tabulce \ref{tab:ri5cy_bus} jsou popsány jednotlivé signály systémové sb�
 \end{table}
 
 \subsection{Průběh přístupu na systémovou sběrnici}
-Obecný průběh přístupu na systémovou sběrnici je zobrazen na obrázku \ref{fig:ri5cy_bus_basic}. Pokud chce master modul přistoupit na sběrnici vystaví adresu na \textit{data\_addr\_o}, nastaví signály \textit{data\_we\_o}, \textit{data\_be\_o}, v případě zápisu vystaví také zapisovaná data \textit{data\_wdata\_o} a nastaví request \textit{data\_req\_o} na hodnotu log. 1. Jakmile je slave modu připravený obsloužit požadavek nastaví \textit{data\_gnt\_i} na hodnotu log. 1. Po přijetí gnt může master v dalším taktu adresu, data a signály \textit{data\_we\_o}, \textit{data\_be\_o} změnit. Slave také nastaví signál \textit{data\_rvalid\_i} na hodnotu log. 1 jeden nebo více taktů po nastavení signálu \textit{data\_gnt\_i}. V případě čtení má signál \textit{data\_rvalid\_i} význam platnosti čtených dat, které jsou vystaveny na \textit{data\_rdata\_i}. V případě zápisu musí být signál \textit{data\_rvalid\_i} nastaven také, i když čtená data nemají žádný význam. \cite{ri5cy}
+Obecný průběh přístupu na systémovou sběrnici je zobrazen na obrázku \ref{fig:ri5cy_bus_basic}. Pokud chce master modul přistoupit na sběrnici vystaví adresu na \texttt{data\_addr\_o}, nastaví signály \texttt{data\_we\_o}, \texttt{data\_be\_o}, v případě zápisu vystaví také zapisovaná data \texttt{data\_wdata\_o} a nastaví request \texttt{data\_req\_o} na hodnotu log. 1. Jakmile je slave modu připravený obsloužit požadavek nastaví \texttt{data\_gnt\_i} na hodnotu log. 1. Po přijetí gnt může master v dalším taktu adresu, data a signály \texttt{data\_we\_o}, \texttt{data\_be\_o} změnit. Slave také nastaví signál \texttt{data\_rvalid\_i} na hodnotu log. 1 jeden nebo více taktů po nastavení signálu \texttt{data\_gnt\_i}. V případě čtení má signál \texttt{data\_rvalid\_i} význam platnosti čtených dat, které jsou vystaveny na \texttt{data\_rdata\_i}. V případě zápisu musí být signál \texttt{data\_rvalid\_i} nastaven také, i když čtená data nemají žádný význam. \cite{ri5cy}
 
 \begin{figure}[!h]
   \begin{center}

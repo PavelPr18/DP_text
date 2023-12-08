@@ -16,7 +16,7 @@
 \contentsline {chapter}{\numberline {2}Návrh a implementace modulu pro dvouvodičový \acs {JTAG} protokol}{19}{chapter.32}%
 \contentsline {section}{\numberline {2.1}Účel redukce počtu pinů \acs {JTAG} rozhraní}{19}{section.33}%
 \contentsline {section}{\numberline {2.2}Serializace signálů čtyřvodičového \acs {JTAG} rozhraní na dvouvodičové}{20}{section.36}%
-\contentsline {subsection}{\numberline {2.2.1}Řízení úrovně na \acs {TMSC} pinu}{20}{subsection.39}%
+\contentsline {subsection}{\numberline {2.2.1}Řízení úrovně na \texttt {\acs {TMSC}} pinu}{20}{subsection.39}%
 \contentsline {section}{\numberline {2.3}Aktivační sekvence dvouvodičové varianty \acs {JTAG} protokolu}{21}{section.42}%
 \contentsline {subsection}{\numberline {2.3.1}Úvodní sekvence pro přepnutí varianty \acs {JTAG} protokolu}{21}{subsection.45}%
 \contentsline {subsection}{\numberline {2.3.2}Sekvence pro výběr varianty \acs {JTAG} protokolu}{22}{subsection.46}%
@@ -26,7 +26,7 @@
 \contentsline {section}{\numberline {2.4}Implementace modulu pro dvouvodičový \acs {JTAG} protokol}{24}{section.60}%
 \contentsline {subsection}{\numberline {2.4.1}Základní popis návrhu}{25}{subsection.61}%
 \contentsline {subsection}{\numberline {2.4.2}Detekce úvodní sekvence pro přepnutí \acs {JTAG} protokolu}{26}{subsection.64}%
-\contentsline {subsection}{\numberline {2.4.3}Zpracování sekvence pro výběr varianty \acs {JTAG} protokolu}{28}{subsection.67}%
+\contentsline {subsection}{\numberline {2.4.3}Zpracování sekvence pro výběr varianty \acs {JTAG} protokolu}{27}{subsection.67}%
 \contentsline {subsubsection}{Část obvodu pro výběr konkrétní dvou nebo čtyřvodičové varianty a rozšiřující části}{28}{section*.68}%
 \contentsline {subsubsection}{Část obvodu pro zpracování kontrolní části aktivační sekvence}{29}{section*.71}%
 \contentsline {subsection}{\numberline {2.4.4}Stavový automat pro serializaci signálů čtyřvodičového rozhraní}{31}{subsection.74}%
