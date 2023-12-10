@@ -1,7 +1,5 @@
-% TODO: sjednotit pořadí "dvou nebo čtyřvodič"
-%				projít si jak nazývám DTS a TS
-
-\chapter{Návrh a implementace modulu pro dvouvodičový \acs{JTAG} protokol}
+\chapter{Rozbor modulu pro dvouvodičový \acs{JTAG} protokol}
+%\chapter{Návrh a implementace modulu pro dvouvodičový \acs{JTAG} protokol}
 Tato kapitola se zaměřuje na princip fungování dvouvodičového \acs{JTAG} rozhraní s možností přepnutí na původní čtyřvodičovou variantu a zpět. Popsána je zde také aktivační sekvence pro výběr jedné z těchto dvou variant komunikace, definovaná standardem IEEE 1149.7. V této kapitole je také uveden způsob implementace modulu pro zpracování aktivační sekvence a převod vstupního dvouvodičového \acs{JTAG} rozhraní na původní čtyřvodičové. %, pokud je zvolena dvouvodičová varianta.
 	
 \section{Účel redukce počtu pinů \acs{JTAG} rozhraní}	\label{sec:2w_interface}
@@ -31,7 +29,7 @@ Pro dvouvodičovou variantu \acs{JTAG} komunikace je zapotřebí odesílat hodno
 \end{figure}
     
 \subsection{Řízení úrovně na \texttt{\acs{TMSC}} pinu}	\label{subsec:oscan1_drive} 
-Při komunikaci pomocí dvouvodičového \acs{JTAG} rozhraní se stává pin \texttt{\acs{TMSC}} obousměrným, jelikož jsou přenášeny výstupní testovací data opačným směrem z \acs{JTAG} systému do debuggeru. Z toho důvodu musí být ošetřena možnost buzení pinu současně z obou směrů. Proto je standardem IEEE 1149.7 definováno pravidlo pro buzení \acs{TMSC} pinu během komunikace. Na obrázku \ref{fig:oscan_drive} je znázorněn průběh komunikace v OSCAN1 formátu, kde jsou přehledně znázorněny okamžiky buzení \texttt{\acs{TMSC}} pinu debuggerem (\acs{DTS}) a \acs{JTAG} systémem (\acs{TS}). Znázorněn je také průběh skutečné hodnoty na \texttt{\acs{TMSC}} pinu, kde je možné si všimnout, že při střídání směrů buzení je na pinu \texttt{\acs{TMSC}} zaručen stav vysoké impedance po dobu poloviny periody hodinového signálu \texttt{\acs{TCKC}}. Tímto je ošetřen vznik konfliktu v buzení \texttt{\acs{TMSC}} pinu. \cite{IEEE_1149-7}
+Při komunikaci pomocí dvouvodičového \acs{JTAG} rozhraní se stává pin \texttt{\acs{TMSC}} obousměrným, jelikož jsou přenášeny výstupní testovací data opačným směrem z \acs{JTAG} systému do debuggeru. Z toho důvodu musí být ošetřena možnost buzení pinu současně z obou směrů. Proto je standardem IEEE 1149.7 definováno pravidlo pro buzení \texttt{\acs{TMSC}} pinu během komunikace. Na obrázku \ref{fig:oscan_drive} je znázorněn průběh komunikace v OSCAN1 formátu, kde jsou přehledně znázorněny okamžiky buzení \texttt{\acs{TMSC}} pinu debuggerem (\acs{DTS}) a \acs{JTAG} systémem (\acs{TS}). Znázorněn je také průběh skutečné hodnoty na \texttt{\acs{TMSC}} pinu, kde je možné si všimnout, že při střídání směrů buzení je na pinu \texttt{\acs{TMSC}} zaručen stav vysoké impedance po dobu poloviny periody hodinového signálu \texttt{\acs{TCKC}}. Tímto je ošetřen vznik konfliktu v buzení \texttt{\acs{TMSC}} pinu. \cite{IEEE_1149-7}
 
 \begin{figure}[!h]
   \begin{center}
@@ -234,7 +232,7 @@ Tříbitový posuvný registr slouží k povolení detekce hodnoty CP\_END nejd�
 
 V případě, že jsou výše popsané podmínky pro ukončení aktivační sekvence splněny, je signálem \texttt{CE} povoleno překlopení posledního klopného obvodu s následující nástupnou hranou \texttt{\acs{TCKC}}. Signál \texttt{online\_i} je tedy nastaven v rámci hodinového taktu, kdy je přijímán poslední bit aktivační sekvence označený \textit{Postamble}, dle formátu kontrolní části aktivační sekvence uvedeného v tabulce \ref{tab:cJTAG_sel_cp}. Signál \texttt{CE} všech klopných obvodů je opět deaktivován po dokončení aktivace, a tím je zamezeno dalšímu překlápění. Signál \texttt{online\_i} je využíván pro povolení funkcionality stavového automatu pro serializaci dat v případě dvouvodičové varianty protokolu a také povoluje propagaci hodinového signálu \texttt{\acs{TCKC}} pro další části obvodu. 
 
-Logické hradlo na výstupu registru pro nastavení \texttt{online\_i} signálu využívá resetovací signál \texttt{sel\_rst} k zapsání log. 0 na signál \texttt{online\_i}, ihned se sestupnou hranou \texttt{\acs{TCKC}} ukončující "Escape" sekvenci. Bez této logické funkce docházelo v případě přepínání z dvouvodičové varianty k propagaci jedné periody hodinového signálu \texttt{\acs{TCKC}} i po "Escape" sekvenci, proto bylo třeba zaručit deaktivaci online režimu po celou dobu aktivační sekvence.
+Logické hradlo na výstupu registru pro nastavení \texttt{online\_i} signálu využívá resetovací signál \texttt{sel\_rst} k zapsání log. \texttt{0} na signál \texttt{online\_i}, ihned se sestupnou hranou \texttt{\acs{TCKC}} ukončující "Escape" sekvenci. Bez této logické funkce docházelo v případě přepínání z dvouvodičové varianty k propagaci jedné periody hodinového signálu \texttt{\acs{TCKC}} i po "Escape" sekvenci, proto bylo třeba zaručit deaktivaci online režimu po celou dobu aktivační sekvence.
 
 \begin{figure}[H]
   \begin{center}
