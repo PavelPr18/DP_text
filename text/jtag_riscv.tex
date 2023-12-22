@@ -1,5 +1,6 @@
 \chapter{Komunikační protokol JTAG}
-Tato kapitola popisuje princip přenosu dat pomocí komunikačního protokolu JTAG a jeho použití pro testování obvodů s procesorem architektury \acs{RISC-V} (\textit{\acl{RISC-V}}). V kapitole je také přiblížen princip fungování systémové sběrnice použitého \acs{RISC-V} procesoru.
+%Tato kapitola popisuje princip přenosu dat pomocí komunikačního protokolu JTAG a jeho použití pro testování obvodů obsahující procesor architektury \acs{RISC} (\textit{\acl{RISC}}) s instrukční sadou \acs{RISC-V}. V kapitole je také přiblížen princip fungování systémové sběrnice použitého \acs{RISC-V} procesoru.
+Tato kapitola popisuje princip přenosu dat pomocí komunikačního protokolu JTAG a jeho použití pro testování obvodů \hl{obsahujících procesor s instrukční sadou {\acs{RISC-V}}}. V kapitole je také přiblížen princip fungování systémové sběrnice použitého \acs{RISC-V} procesoru.
 
 \section{Základní popis \acs{JTAG} protokolu}
 \acs{JTAG} (\textit{\acl{JTAG}}) je standardizovaná komunikační sběrnice určená pro testování integrovaných obvodů a \acs{DPS} (\textit{\acl{DPS}}).
@@ -19,7 +20,7 @@ Standard IEEE 1149.1 definuje stavový automat, který je hlavní součástí \a
 \end{figure}
 
 \section{Systém pro testování \acs{RISC-V}}		\label{sec:risc-v_dbg}
-Pro procesory architektury \acs{RISC-V} je definován systém pro jejich testování a ladění, dle specifikace \textit{RISC-V External Debug Support}. Blokové schéma systému je zobrazené na obrázku \ref{fig:blok_sch_risc-v_dbg}. Nadřazeným systémem pro testování integrovaných obvodů je dle schématu \textit{debugger}, kterým je zpravidla testovací software v PC. Pro jeho spojení s integrovaným obvodem je třeba zpravidla použít převodník z USB na JTAG protokol. Systém pro přístup k procesorovému jádru se nazývá \ac{DM}. Součástí Debug modulu je blok realizující přístup na systémovou sběrnici (\textit{System Bus Access}), který je popsán v podkapitole \ref{subsec:dm_sba}. Přechod mezi hodinovými doménami \acs{JTAG} rozhraní a systémové sběrnice v tomto systému realizuje rozhraní \ac{DMI}. \cite{risc-v_dbg}
+Pro procesory architektury \acs{RISC-V} je definován systém pro jejich testování a ladění, dle specifikace \textit{RISC-V External Debug Support}. Blokové schéma systému je zobrazené na obrázku \ref{fig:blok_sch_risc-v_dbg}. Nadřazeným systémem pro testování integrovaných obvodů je dle schématu \textit{debugger}, kterým je zpravidla testovací software v PC, \hl{například OpenOCD, TRACE32 a další}. Pro jeho spojení s integrovaným obvodem je třeba zpravidla použít převodník z USB na JTAG protokol. Systém pro přístup k procesorovému jádru se nazývá \ac{DM}. Součástí Debug modulu je blok realizující přístup na systémovou sběrnici (\textit{System Bus Access}), který je popsán v podkapitole \ref{subsec:dm_sba}. Přechod mezi hodinovými doménami \acs{JTAG} rozhraní a systémové sběrnice v tomto systému realizuje rozhraní \ac{DMI}. \cite{risc-v_dbg}
 
 %Systém umožňuje vykonávat krátký program 
 
@@ -90,7 +91,7 @@ Modul sloužící k ladění procesorového jádra (\textit{\acl{DM}}) obsahuje 
 
 Tento registr funguje jako posuvný registr pro komunikaci prostřednictvím \acs{JTAG} protokolu. Pro aktivaci přístupu k registrům popisovaným způsobem je třeba přepnout instrukci zápisem hodnoty \texttt{0x11} (\textit{DMI Access}) do instrukčního registru, jak je uvedeno v podkapitole \ref{subsec:jtag_instr}. Poté může debugger zahájit komunikaci s testovacím systémem.
  
-Obecný časový průběh přístupu na danou adresu testovacího systému je znázorněn na obrázku \ref{fig:dmi}. Kromě signálů \acs{JTAG} rozhraní je zobrazen také příslušný stav řídicího stavového automatu. Komunikace začíná vždy přechodem stavového automatu do stavu \textit{Shift-DR} a odesláním požadované hodnoty na vstup \texttt{TDI}. Přičemž zpracování požadavku je vždy zahájeno přechodem automatu do stavu \textit{Update-DR} (na obrázku \texttt{Up-D}). Hodnota odeslaná zpět prostřednictvím pinu \texttt{TDO} je do posuvného registru přiřazena v rámci průchodu stavem \textit{Capture-DR} (na obrázku \texttt{Ca-D}). \cite{risc-v_dbg}
+Obecný časový průběh přístupu na danou adresu testovacího systému je znázorněn na obrázku \ref{fig:dmi}. Kromě signálů \acs{JTAG} rozhraní je zobrazen také příslušný stav řídicího stavového automatu. Komunikace začíná vždy přechodem stavového automatu do stavu \textit{Shift-DR} a odesláním požadované hodnoty na vstup \texttt{TDI}. \hl{Hodnota DMI registru je vždy odeslána v pořadí od nejméně významného bitu ({\acs{LSB}}) po nejvíce významný bit ({\acs{MSB}}).} Přičemž zpracování požadavku je vždy zahájeno přechodem automatu do stavu \textit{Update-DR} (na obrázku \texttt{Up-D}). Hodnota odeslaná zpět prostřednictvím pinu \texttt{TDO} je do posuvného registru přiřazena v rámci průchodu stavem \textit{Capture-DR} (na obrázku \texttt{Ca-D}). \cite{risc-v_dbg}
 
 %TODO: prepnuti instrukce??
 
@@ -127,7 +128,7 @@ Hodnota operace (\textit{op}) při odeslání požadavku pro přístup k registr
 	\label{tab:dmi_access_op}
 \end{table}
 
-V případě odpovědi \acs{JTAG} systému mohou být hodnoty přijaté debuggerem 0, 2 nebo 3, jejichž význam je popsaný tabulkou \ref{tab:dmi_access_op_response}. V případě příjmu hodnoty 0 je debugger informován, že následující požadavek na přístup k registru bude akceptován, protože předchozí operace byla dokončena. V opačném případě je \acs{JTAG} systémem odeslána hodnota 3, což indikuje probíhající operaci a aktuální požadavek nemůže být vykonán. Pokud nastane tato situace, je hodnota 3 navrácena při každém dalším požadavku, což je velkou nevýhodou tohoto testovacího systému. Pro vymazání tohoto stavu je třeba resetovat celý testovací systém zápisem do řídicího registru \textit{DTMCS}. \cite{risc-v_dbg}
+V případě odpovědi \acs{JTAG} systému mohou být hodnoty přijaté debuggerem 0, 2 nebo 3, jejichž význam je popsaný tabulkou \ref{tab:dmi_access_op_response}. V případě příjmu hodnoty 0 je debugger informován, že následující požadavek na přístup k registru bude akceptován, protože předchozí operace byla dokončena. V opačném případě je \acs{JTAG} systémem odeslána hodnota 3, což indikuje probíhající operaci a aktuální požadavek nemůže být vykonán. Pokud nastane tato situace, je hodnota 3 navrácena při každém dalším požadavku. Pro vymazání tohoto stavu je třeba \hl{tento stav} resetovat zápisem do řídicího registru \textit{DTMCS}. \hl{Tato vlastnost je značnou nevýhodou tohoto řešení, protože změna instrukce pro zápis do \textit{DTMCS} registru, zápis do registru a změna instrukce zpět prodlužuje čas přístupu k požadovanému registru testovacího systému.} \cite{risc-v_dbg}
 
 Jelikož požadavek je vždy odstartován přechodem stavového automatu do stavu \textit{Update-DR} a návratová hodnota operace je vyhodnocena při průchodu stavem\\ \textit{Capture-DR}, bude čas na vykonání požadavku vždy určený počtem taktů \texttt{TCK} hodinového signálu ve stavu \textit{Run-Test/Idle}.
 
@@ -177,9 +178,10 @@ Pro přístup	na systémovou sběrnici jsou v debug modulu vyhrazeny registry po
 \end{table}
 
 \subsubsection{Zápis na systémovou sběrnici pomocí Debug modulu}
-Pro možnost zápisu na systémovou sběrnici je třeba nejdříve zapsat do řídicího registru \textit{sbcs} hodnotu \texttt{0x00040000}. Tato hodnota nastaví přístup ke sběrnici o šířce 32 bitů a režim zápisu. \cite{risc-v_dbg}
+%Pro možnost zápisu na systémovou sběrnici je třeba nejdříve zapsat do řídicího registru \textit{sbcs} hodnotu \texttt{0x00040000}. Tato hodnota nastaví přístup ke sběrnici o šířce 32 bitů a režim zápisu. \cite{risc-v_dbg}
+\hl{Pro možnost zápisu na systémovou sběrnici je třeba nejdříve zapsat do řídicího registru \textit{sbcs} příslušnou hodnotu pro nastavení přístupu ke sběrnici o šířce 32 bitů a režimu zápisu.} \cite{risc-v_dbg}
 
-Pokud je režim zápisu již nastaven, je možné provézt samotný zápis, jehož časový průběh je znázorněn na obrázku \ref{fig:dmi_w}. Zápis na systémovou sběrnici tedy obsahuje zápis požadované adresy do registru \textit{sbaddress0} (\texttt{0x39}) a zapisovaných dat \textit{sbdata0} (\texttt{0x3C}). Jelikož jde v obou případech o zápis do registru, obsahuje návratová hodnota \acs{DMI} registru vždy předchozí data a adresu.
+Pokud je režim zápisu již nastaven, je možné provést samotný zápis, jehož časový průběh je znázorněn na obrázku \ref{fig:dmi_w}. Zápis na systémovou sběrnici tedy obsahuje zápis požadované adresy do registru \textit{sbaddress0} (\texttt{0x39}) a zapisovaných dat \textit{sbdata0} (\texttt{0x3C}). Jelikož jde v obou případech o zápis do registru, obsahuje návratová hodnota \acs{DMI} registru vždy předchozí data a adresu.
  
 \begin{figure}[!h]
   \begin{center}
@@ -203,11 +205,10 @@ Pro aktivaci režimu čtení ze systémové sběrnice je třeba zapsat do řídi
 \end{figure}
 
 \section{Systémová sběrnice PULP RISC-V}
-Jako procesorové jádro je v integrovaném obvodu, pro který je rozšíření JTAG front-endu navrženo, použito procesorové jádro typu \acs{RISC-V}. Konkrétní typ procesorového jádra je \acs{PULP} (\acl{PULP}) C32E40P 32-bitový procesor. Předchozí verze jádra se nazývá RI5CY. Rozdíly mezi těmito verzemi nejsou pro popis systémové sběrnice a návrh rozšiřujícího JTAG front-endu podstatné, proto je možné se v této práci odkazovat na starší verzi RI5CY. Systémová sběrnice tohoto procesorového jádra je založena na jednoduchém \textbf{Request-Grant} protokolu. Na sběrnici mohou být obecně připojeny \textit{master} a \textit{slave} moduly. Jako master modul je možné uvažovat dříve popsaný testovací systém nebo nově navržený rozšiřující modul popsaný v kapitole \ref{jtag_ap}. Slave modulem může být 
-například paměť.
+Jako procesorové jádro je v integrovaném obvodu, pro který je rozšíření JTAG front-endu navrženo, použito procesorové jádro typu \acs{RISC-V}. Konkrétní typ procesorového jádra je \acs{PULP} (\acl{PULP}) RI5CY 32-bitový procesor. Systémová sběrnice tohoto procesorového jádra je založena na jednoduchém \textbf{Request-Grant} protokolu. Na sběrnici mohou být obecně připojeny \textit{master} a \textit{slave} moduly. Jako master modul je možné uvažovat dříve popsaný testovací systém nebo nově navržený rozšiřující modul popsaný v kapitole \ref{jtag_ap}. Slave modulem může být například paměť.
 
 \subsection{Signály systémové sběrnice}
-V tabulce \ref{tab:ri5cy_bus} jsou popsány jednotlivé signály systémové sběrnice procesory PULP RICS-V.
+V tabulce \ref{tab:ri5cy_bus} jsou \hl{obecně} popsány jednotlivé signály systémové sběrnice procesory PULP RICS-V.
 
 \begin{table}[H]
 	\FloatBarrier
@@ -241,7 +242,7 @@ V tabulce \ref{tab:ri5cy_bus} jsou popsány jednotlivé signály systémové sb�
 \end{table}
 
 \subsection{Průběh přístupu na systémovou sběrnici}
-Obecný průběh přístupu na systémovou sběrnici je zobrazen na obrázku \ref{fig:ri5cy_bus_basic}. Pokud chce \textit{master} modul přistoupit na sběrnici, vystaví adresu na \texttt{data\_addr\_o}, nastaví signály \texttt{data\_we\_o}, \texttt{data\_be\_o}, v případě zápisu vystaví také zapisovaná data \texttt{data\_wdata\_o} a nastaví request \texttt{data\_req\_o} na hodnotu log. \texttt{1}. Jakmile je \textit{slave} modul připravený obsloužit požadavek, nastaví \texttt{data\_gnt\_i} na hodnotu log. \texttt{1}. Po přijetí \texttt{data\_gnt\_i} může \textit{master} v dalším taktu změnit adresu, data a signály \texttt{data\_we\_o} a \texttt{data\_be\_o}. \textit{Slave} také nastaví signál \texttt{data\_rvalid\_i} na hodnotu log. \texttt{1}, a to jeden nebo více taktů po nastavení signálu \texttt{data\_gnt\_i}. V případě čtení má signál \texttt{data\_rvalid\_i} význam platnosti čtených dat, které jsou vystaveny na \texttt{data\_rdata\_i}. V případě zápisu musí být signál \texttt{data\_rvalid\_i} nastaven také, přestože čtená data nemají žádný význam. \cite{ri5cy}
+Obecný průběh přístupu na systémovou sběrnici je zobrazen na obrázku \ref{fig:ri5cy_bus_basic}, \hl{kde je použitý příklad přístupu k paměti, přičemž pro jiné \textit{slave} moduly bude protokol sběrnice fungovat totožně.} Pokud chce \textit{master} modul přistoupit na sběrnici, vystaví adresu na \texttt{data\_addr\_o}, nastaví signály \texttt{data\_we\_o}, \texttt{data\_be\_o} \hl{a v případě zápisu vystaví také zapisovaná data \texttt{data\_wdata\_o}. Poté \textit{master} nastaví request \texttt{data\_req\_o} na hodnotu log. \texttt{1}, čímž podává požadavek na přístup.} Jakmile je \textit{slave} modul připravený obsloužit požadavek, nastaví \texttt{data\_gnt\_i} na hodnotu log. \texttt{1}. Po přijetí \texttt{data\_gnt\_i} může \textit{master} v dalším taktu změnit adresu, data a signály \texttt{data\_we\_o} a \texttt{data\_be\_o}. \textit{Slave} také nastaví signál \texttt{data\_rvalid\_i} na hodnotu log. \texttt{1}, a to jeden nebo více taktů po nastavení signálu \texttt{data\_gnt\_i}. V případě čtení má signál \texttt{data\_rvalid\_i} význam platnosti čtených dat, které jsou vystaveny na \texttt{data\_rdata\_i}. V případě zápisu musí být signál \texttt{data\_rvalid\_i} nastaven také, přestože čtená data nemají žádný význam. \cite{ri5cy}
  
 \begin{figure}[t]
   \begin{center}
@@ -251,7 +252,7 @@ Obecný průběh přístupu na systémovou sběrnici je zobrazen na obrázku \re
 	\label{fig:ri5cy_bus_basic}
 \end{figure}
 
-Na sběrnici může nastat také případ, kdy paměť nemůže odpovědět okamžitě a signál \texttt{data\_gnt\_i} je nastaven až po několika hodinových taktech, jak je vidět na obrázku \ref{fig:ri5cy_bus_slow_res}. V tomto případě musí být pouze zaručeno, aby \textit{master} neměnil signály \texttt{data\_we\_o}, \texttt{data\_be\_o}, a \texttt{data\_wdata\_o}. 
+Na sběrnici může nastat také případ, kdy \hl{\textit{slave}} nemůže odpovědět okamžitě a signál \texttt{data\_gnt\_i} je nastaven až po několika hodinových taktech, jak je vidět na obrázku \ref{fig:ri5cy_bus_slow_res}. V tomto případě musí být pouze zaručeno, aby \textit{master} neměnil signály \texttt{data\_we\_o}, \texttt{data\_be\_o}, a \texttt{data\_wdata\_o}. 
 
 \begin{figure}[H]
   \begin{center}
