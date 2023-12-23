@@ -68,11 +68,11 @@ Význam hodnot \textit{op} (operace) je popsán v tabulce \ref{tab:op_vals}. Vý
 
 %\subsubsection{Busy-wait mód - zápis} 
 \subsubsection{Zápis na systémovou sběrnici prostřednictvím Busy-wait módu} 
-Průběh JTAG komunikace pro zápis na systémovou sběrnici je zobrazen na obrázku \ref{fig:busy_w}. Po přechodu do stavu \textit{Shift-DR} je nejdříve odeslána 3-bitová hodnota \textit{op}, která může v případě zápisu nabývat hodnot 1, 3 nebo 5, podle délky zapisovaných dat. Následuje odesílání 21-bitové adresy, na kterou se budou data zapisovat. Po odeslání adresy následuje přenos požadovaných dat k zápisu, jejichž délka je určena hodnotou \textit{op}. Pro zápis na další adresu je třeba provést průchod řídicím stavovým automatem. Pokud je navrácena hodnota \textit{status} = 1 (\textit{busy}), nebudou následující data zapsána, protože se musí nejdříve dokončit probíhající zápis na systémovou sběrnici. Debugger by v tomto případě měl požadavek pro zapsání dat opakovat dokud nebude navrácen \textit{status} = 0 (\textit{no\_err}).
+Časový průběh JTAG komunikace pro zápis na systémovou sběrnici je zobrazen na obrázku \ref{fig:busy_w}. Po přechodu řídicího stavového automatu do stavu \textit{Shift-DR} je nejdříve odeslána 3-bitová hodnota \textit{op}, která může v případě zápisu nabývat hodnot 1, 3 nebo 5, podle délky zapisovaných dat. Následuje odesílání 21-bitové adresy, na kterou se budou data zapisovat. Po odeslání adresy následuje přenos požadovaných dat k zápisu, jejichž délka je určena hodnotou \textit{op}. Pro zápis na další adresu je třeba provést průchod řídicím stavovým automatem. Pokud je navrácena hodnota \textit{status} = 1 (\textit{busy}), nebudou následující data zapsána, protože se musí nejdříve dokončit probíhající zápis na systémovou sběrnici. Debugger by v tomto případě měl požadavek pro zapsání dat opakovat dokud nebude navrácen \textit{status} = 0 (\textit{no\_err}).
 
 \begin{figure}[H]
   \begin{center}
-    \includegraphics[scale=0.6]{obrazky/busy_w.pdf}
+    \includegraphics[scale=0.575]{obrazky/busy_w.pdf}
   \end{center}
   \caption{Průběh zápisu na systémovou sběrnici v Busy-wait módu.}
 	\label{fig:busy_w}
@@ -80,11 +80,11 @@ Průběh JTAG komunikace pro zápis na systémovou sběrnici je zobrazen na obr�
 
 %\subsubsection{Busy-wait mód - čtení} 
 \subsubsection{Čtení ze systémové sběrnice prostřednictvím Busy-wait módu} 
-Průběh JTAG komunikace v případě čtení ze systémové sběrnice je zobrazen na obrázku \ref{fig:busy_r}. Nejprve je odeslána hodnota \textit{op} = 0, 2 nebo 4, která dle tabulky \ref{tab:op_vals} uvozuje odesílání adresy, ze které bude vyčtena hodnota registru a délku čtených dat. Jakmile je adresa odeslána, spustí se čtení ze systémové sběrnice. Debugger projde pomocí signálu \texttt{\acs{TMS}} řídicím stavovým automatem, dle stavového diagramu na obrázku \ref{fig:tap_controller} zpět do stavu \textit{Shift-DR} a odešle hodnotu \textit{op} = 6, kterou je požadováno odeslání dat vyčtených z požadované adresy zpět prostřednictvím \texttt{\acs{TDO}} pinu. V případě, že je navrácen \textit{status} = 1 (busy), odpovídající nedokončenému čtení ze systémové sběrnice, nejsou následující data platná. V dalším průchodu má debugger možnost žádat od data znovu (\textit{op} = 6) nebo zažádat o vyčtení z jiné adresy.
+Časový průběh JTAG komunikace v případě čtení ze systémové sběrnice je zobrazen na obrázku \ref{fig:busy_r}. Nejprve je odeslána hodnota \textit{op} = 0, 2 nebo 4, která dle tabulky \ref{tab:op_vals} uvozuje odesílání adresy, ze které bude vyčtena hodnota registru a délku čtených dat. Jakmile je adresa odeslána, spustí se čtení ze systémové sběrnice. Debugger projde pomocí signálu \texttt{\acs{TMS}} řídicím stavovým automatem, dle stavového diagramu na obrázku \ref{fig:tap_controller} zpět do stavu \textit{Shift-DR} a odešle hodnotu \textit{op} = 6, kterou je požadováno odeslání dat vyčtených z požadované adresy zpět prostřednictvím \texttt{\acs{TDO}} pinu. V případě, že je navrácen \textit{status} = 1 (busy), odpovídající nedokončenému čtení ze systémové sběrnice, nejsou následující data platná. V dalším průchodu má debugger možnost žádat od data znovu (\textit{op} = 6) nebo zažádat o vyčtení z jiné adresy.
 
-\begin{figure}[!h]
+\begin{figure}[H]
   \begin{center}
-    \includegraphics[scale=0.45]{obrazky/busy_r.pdf}
+    \includegraphics[scale=0.68]{obrazky/busy_r.pdf}
   \end{center}
   \caption{Průběh čtení ze systémové sběrnice v Busy-wait módu.}
 	\label{fig:busy_r}
@@ -99,11 +99,11 @@ K výběru zda jde o zápis nebo čtení a délky odesílaných dat je využita 
 
 %\subsubsection{Dynamic-wait mód - zápis} 
 \subsubsection{Zápis na systémovou sběrnici prostřednictvím Dynamic-wait módu} 
-Na obrázku \ref{fig:wait_w} je znázorněn průběh \acs{JTAG} komunikace popisující způsob zápisu na systémovou sběrnici v dynamickém  režimu. Po přechodu do stavu \textit{Shift-DR} řídicího stavového automatu (\acs{TAP}) je odeslána 3-bitová hodnota \textit{op}, která může nabývat hodnot 1, 3 nebo 5, podle délky zapisovaných dat, stejně jako při zápisu v \textbf{Busy-wait} módu. Následuje odeslání 21-bitové adresy, na kterou je požadaváno data zapsat a poté samotná data dle zvolené délky. Jakmile jsou data odeslána následuje fáze zpracování zápisu systémovou sběrnicí, kdy je \acs{JTAG} systémem vystavena hodnota log. \texttt{0} na signálu \texttt{\acs{TDO}} a je držena dokud zápis na systémové sběrnici není proveden. Po dokončení zápisu \acs{JTAG} systém nastaví signál \texttt{\acs{TDO}} na úroveň log. \texttt{1} po dobu jednoho taktu. Po takto zapsaných datech může být proveden zápis na další adresu okamžitě bez nutnosti průchodu stavovým automatem, jak je uvedeno na obrázku nebo může být přenos ukončen přechodem do stavu \textit{Exit1-DR}, což je zobrazeno na konci průběhu. V případě ukončení přenosu by měla být poslední hodnota na \texttt{\acs{TDO}} nastavená na hodnotu log. \texttt{0}. Důvodem je, že \acs{JTAG} systém po přechodu ze stavu \textit{Shift-DR} získává informaci právě v tomto taktu a tudíž by pro případ pokračování v komunikaci hodnota log. \texttt{1} v tomto taktu znamenala \textit{status} = 1 (\textit{busy}), který v tomto dynamickém módu nemůže nastat.
+Na obrázku \ref{fig:wait_w} je znázorněn časový průběh \acs{JTAG} komunikace popisující způsob zápisu na systémovou sběrnici v dynamickém  režimu. Po přechodu řídicího stavového automatu do stavu \textit{Shift-DR} je odeslána 3-bitová hodnota \textit{op}, která může nabývat hodnot 1, 3 nebo 5, podle délky zapisovaných dat, stejně jako při zápisu v \textbf{Busy-wait} módu. Následuje odeslání 21-bitové adresy, na kterou je požadaváno data zapsat a poté samotná data dle zvolené délky. Jakmile jsou data odeslána následuje fáze zpracování zápisu systémovou sběrnicí, kdy je \acs{JTAG} systémem vystavena hodnota log. \texttt{0} na signálu \texttt{\acs{TDO}} a je držena dokud zápis na systémové sběrnici není proveden. Po dokončení zápisu \acs{JTAG} systém nastaví signál \texttt{\acs{TDO}} na úroveň log. \texttt{1} po dobu jednoho taktu. Po takto zapsaných datech může být proveden zápis na další adresu okamžitě bez nutnosti průchodu stavovým automatem, jak je uvedeno na obrázku nebo může být přenos ukončen přechodem do stavu \textit{Exit1-DR}, což je zobrazeno na konci průběhu. V případě ukončení přenosu by měla být poslední hodnota na \texttt{\acs{TDO}} nastavená na hodnotu log. \texttt{0}. Důvodem je, že \acs{JTAG} systém po přechodu ze stavu \textit{Shift-DR} získává informaci právě v tomto taktu a tudíž by pro případ pokračování v komunikaci hodnota log. \texttt{1} v tomto taktu znamenala \textit{status} = 1 (\textit{busy}), který v tomto dynamickém módu nemůže nastat.
 
 \begin{figure}[!h]
   \begin{center}
-    \includegraphics[scale=0.35]{obrazky/wait_w.pdf}
+    \includegraphics[scale=0.56]{obrazky/wait_w.pdf}
   \end{center}
   \caption{Průběh zápisu na systémovou sběrnici v Dynamic-wait módu.}
 	\label{fig:wait_w}
@@ -111,22 +111,23 @@ Na obrázku \ref{fig:wait_w} je znázorněn průběh \acs{JTAG} komunikace popis
 
 %\subsubsection{Dynamic-wait mód - čtení} 
 \subsubsection{Čtení ze systémové sběrnice prostřednictvím Dynamic-wait módu}
-Průběh JTAG komunikace v případě čtení v dynamickém režimu je zobrazen na obrázku \ref{fig:wait_r}. Komunikace začíná odesláním hodnoty operace, která může nabývat hodnot \textit{op} = 0, 2 nebo 4 stejně jako pro čtení v Busy-wait módu. Následuje odesílání 21-bitové adresy. Po odeslání adresy je spuštěn požadavek čtení ze systémové sběrnice a následuje signalizace dokončení čtení. Jakmile je operace dokončena \acs{JTAG} systém nastaví signál \texttt{\acs{TDO}} na úroveň log. 1 a začne vysílat přečtená data. Po odeslání dat může debugger pokračovat v dalším čtením či zápisem s možností volby délky dat dle hodnoty \textit{op}, nebo komunikaci ukončit. 
+Časový průběh JTAG komunikace v případě čtení v dynamickém režimu je zobrazen na obrázku \ref{fig:wait_r}. Komunikace začíná odesláním hodnoty operace, která může nabývat hodnot \textit{op} = 0, 2 nebo 4 stejně jako pro čtení v Busy-wait módu. Následuje odesílání 21-bitové adresy. Po odeslání adresy je spuštěn požadavek čtení ze systémové sběrnice a následuje signalizace dokončení čtení. Jakmile je operace dokončena \acs{JTAG} systém nastaví signál \texttt{\acs{TDO}} na úroveň log. 1 a začne vysílat přečtená data. Po odeslání dat může debugger pokračovat v dalším čtením či zápisem s možností volby délky dat dle hodnoty \textit{op}, nebo komunikaci ukončit. 
 
 \begin{figure}[!h]
   \begin{center}
-    \includegraphics[scale=0.33]{obrazky/wait_r.pdf}
+    \includegraphics[scale=0.6]{obrazky/wait_r.pdf}
   \end{center}
   \caption{Průběh čtení ze systémové sběrnice v Dynamic-wait módu.}
 	\label{fig:wait_r}
 \end{figure}
 
 \section{Zhodnocení návrhu optimalizovaného protokolu pro přístup na systémovou sběrnici}
-V této kapitole byly popsána dvě varianty protokolu pro přístup na systémovou sběrnici pomocí \acs{JTAG} rozhraní. Obě varianty jsou časově optimalizované oproti přístupu na systémovou sběrnice pomocí původního testovacího systému popsaného v podkapitole \ref{sec:risc-v_dbg}.
+V této kapitole byly popsány dvě varianty protokolu pro přístup na systémovou sběrnici pomocí \acs{JTAG} rozhraní. Obě varianty jsou časově optimalizované oproti přístupu na systémovou sběrnice pomocí původního testovacího systému popsaného v podkapitole \ref{sec:risc-v_dbg}.
 
-První varianta je inspirována řešením původního testovacího systému, kde se využívá signalizace probíhajícího přístupu na systémovou sběrnici prostřednictvím \textit{status} kódu. Tato varianta je oproti původnímu přístupu časově optimálnější, protože není třeba procházet řídicím stavovým automatem v takové míře.
+První varianta je inspirována řešením původního testovacího systému, kde se využívá signalizace probíhajícího přístupu na systémovou sběrnici prostřednictvím \textit{status} kódu. Tato varianta je oproti původnímu přístupu časově optimálnější, protože není třeba procházet řídicím stavovým automatem
+ v takové míře.
 
-Druhá varianta protokolu je ze všech možností nejvíce časově optimální, protože využívá signalizace probíhajícího přístupu na systémovou sběrnici prostřednictvím \texttt{\acs{TDO}}. Díky této vlastnosti také není třeba procházet řídicím stavovým automatem během komunikace a po zpracování požadavku na systémové sběrnici nevzniká výrazná prodleva před započetím další komunikace. 
+Druhá varianta protokolu je ze všech možností nejvíce časově optimální, protože využívá signalizace probíhajícího přístupu na systémovou sběrnici prostřednictvím \texttt{\acs{TDO}}. Díky této vlastnosti také není třeba procházet řídicím stavovým automatem během komunikace a po zpracování požadavku na systémové sběrnici nevzniká výrazná prodleva před započetím další komunikace.
 
 %\section{Implementace}
 
