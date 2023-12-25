@@ -2,20 +2,13 @@
 \phantomsection
 \addcontentsline{toc}{chapter}{Úvod}
 
+Tématem této semestrální práce je návrh modulu pro dvouvodičový \acs{JTAG} protokol a rozšiřujícího protokolu pro přístup na systémovou sběrnici \acs{RISC-V} procesoru.
 
-Úvod studentské práce, např\,\dots
+Cílem semestrální práce je navrhnout modul podporující komunikaci pomocí dvouvodičové varianty \acs{JTAG} protokolu s možností přepínat mezi touto a čtyřvodičovou variantou dle standardu IEEE 1149.7. Dalším cílem je návrh časově optimalizovaný protokol využívající \acs{JTAG} rozhraní pro testovaní procesorů \acs{RISC-V}.
 
-Nečíslovaná kapitola Úvod obsahuje \uv{seznámení} čtenáře s~problematikou práce.
-Typicky se zde uvádí:
-(a) do jaké tematické oblasti práce spadá, (b) co jsou hlavní cíle celé práce a (c) jakým způsobem jich bylo dosaženo.
-Úvod zpravidla nepřesahuje jednu stranu.
-Poslední odstavec Úvodu standardně představuje základní strukturu celého dokumentu.
+V úvodní části práce je obecně přestaveno testovací rozhraní \acs{JTAG} a základní princip fungování řídicího stavového automatu dle příslušného standardu IEEE 1149.1. Dále je uveden testovací systém pro procesory \acs{RISC-V}, který je použitý pro přístup na systémovou sběrnici procesoru. Princip fungování systémové sběrnice použitého procesorového jádra je také představen v rámci úvodní kapitoly.
 
-Tato práce se věnuje oblasti \acs{DSP} (\acl{DSP}), zejména jevům, které nastanou při nedodržení Nyquistovy podmínky pro \ac{symfvz}.%
-\footnote{Tato věta je pouze ukázkou použití příkazů pro sazbu zkratek.}
+Druhá kapitola se věnuje principu komunikace dvouvodičovou variantou \acs{JTAG} protokolu, způsobu aktivace dvouvodičového režimu a také možnosti přepnutí na původní čtyřvodičovou variantu. Dále je v této kapitole popsán způsob návrhu a implementace modulu zajišťujícího uvedenou funkcionalitu.
 
-Šablona je nastavena na \emph{dvoustranný tisk}.
-Nebuďte překvapeni, že ve vzniklém PDF jsou volné stránky.
-Je to proto, aby důležité stránky jako např.\ začátky kapitol začínaly po vytisknutí a svázání vždy na pravé straně.
-%
-Pokud máte nějaký závažný důvod sázet (a~zejména tisknout) jednostranně, nezapomeňte si přepnout volbu \texttt{twoside} na \texttt{oneside}!
+V poslední části práce je popsán navržený protokol pro přístup na systémovou sběrnici procesoru. Tento protokol bude využitý jako vedlejší možnost přístupu na systémovou sběrnici, která je časově efektivnější oproti stávajícímu způsobu využívajícího systém pro testování \acs{RISC-V} procesorů. Uveden je také způsob zkrácení přenášené adresy registru, ke kterému je přistupováno a možnosti délky přenášených dat. Protokol je navržený ve dvou variantách, které jsou popsány detailněji v jednotlivých částech této kapitoly a jsou zhodnoceny jejich vlastnosti.
+
