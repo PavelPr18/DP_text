@@ -2,11 +2,11 @@
 \phantomsection
 \addcontentsline{toc}{chapter}{Úvod}
 
-Tématem této semestrální práce je návrh rozšíření \acs{JTAG} front-endu o podporu dvou a čtyřvodičového protokolu a návrh rozšíření pro přístup na systémovou sběrnici \acs{RISC-V} procesoru.
+Tématem této semestrální práce je testování integrovaných obvodů pomocí \acs{JTAG} rozhraní. Práce se zabývá návrhem rozšíření \acs{JTAG} front-endu o podporu dvouvodičového protokolu a rozšíření systému pro testování obvodů s procesorem architektury \acs{RISC-V} o další možnost přístupu na systémovou sběrnici.
 
 Cílem semestrální práce je navrhnout modul podporující komunikaci pomocí dvouvodičové varianty \acs{JTAG} protokolu s možností přepínat mezi touto a čtyřvodičovou variantou. Dalším cílem je návrh časově optimalizovaného protokolu pro přístup na systémovou sběrnici \acs{RISC-V} procesoru využívající \acs{JTAG} rozhraní.
 
-V úvodní části práce je obecně přestaveno testovací rozhraní \acs{JTAG} a základní princip fungování řídicího stavového automatu dle příslušného standardu IEEE 1149.1. Dále je uveden testovací systém pro procesory \acs{RISC-V}, který je použitý pro přístup na systémovou sběrnici procesoru. \hl{Princip fungování systémové sběrnice použitého procesorového jádra je uveden na konci této kapitoly.}
+V úvodní části práce je obecně představeno testovací rozhraní \acs{JTAG} a základní princip fungování řídicího stavového automatu dle příslušného standardu IEEE 1149.1. Dále je uveden testovací systém pro procesory \acs{RISC-V}, který je použitý pro přístup na systémovou sběrnici procesoru. Princip fungování systémové sběrnice použitého procesorového jádra je uveden na konci této kapitoly.
 
 Druhá kapitola se věnuje principu komunikace dvouvodičovou variantou \acs{JTAG} protokolu, způsobu aktivace dvouvodičového režimu a také možnosti přepnutí na původní čtyřvodičovou variantu. Dále je v této kapitole popsán způsob návrhu a implementace modulu zajišťujícího uvedenou funkcionalitu.
 
