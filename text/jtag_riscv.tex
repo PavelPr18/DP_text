@@ -36,7 +36,7 @@ Pro procesory architektury \acs{RISC-V} je definován systém pro jejich testov�
 Systém pro testování \acs{RISC-V} definuje základní \acs{JTAG} instrukce dle tabulky \ref{tab:jtag_instr}. Délka instrukčního registru je v tomto případě 5 bitů. Výchozí hodnotou instrukčního registru je \textit{IDCODE}, což umožňuje vyčíst z datového registru informace o zařízení. V případě, že je zvolena instrukce \textit{BYPASS}, funguje datový registr jako jednobitový posuvný registr mezi piny \texttt{TDI} a \texttt{TDO}, a jeho hodnota nemá z hlediska systému žádnou funkci. Této možnosti se využívá při zapojení několika \acs{JTAG} zařízení do série (\textit{Daisy-Chain}). Pro testování \acs{RISC-V} je specifikována instrukce \hl{\textit{DTM Control and Status} (DTMCS)} umožňující především reset testovacího systému a instrukce \textit{DMI Access} umožňující přístup k registrům testovacího systému popsaného v podkapitole \ref{subsec:dm_reg_access}. \cite {IEEE_1149-1} \cite{risc-v_dbg}
 
 \begin{table}[!h]
-  \caption{Tabulka možných hodnot instrukčního registru. \cite{risc-v_dbg}}
+  \caption{Tabulka možných hodnot instrukčního registru \cite{risc-v_dbg}}
   \begin{center}
   	\small
 	  \begin{tabular}{!{\vrule width 1.2pt}M{1.5cm}|M{2.5cm}|M{9cm}!{\vrule width 1.2pt}}
@@ -66,7 +66,7 @@ Systém pro testování \acs{RISC-V} definuje základní \acs{JTAG} instrukce dl
   \begin{center}
     \includegraphics[scale=0.76]{obrazky/instr_general.pdf}
   \end{center}
-  \caption{Průběh přepnutí \acs{JTAG} instrukce.}
+  \caption{Průběh přepnutí \acs{JTAG} instrukce}
 	\label{fig:jtag_instr}
 \end{figure}
 
@@ -74,7 +74,7 @@ Systém pro testování \acs{RISC-V} definuje základní \acs{JTAG} instrukce dl
 Modul sloužící k ladění procesorového jádra (\textit{\acl{DM}}) obsahuje sadu 32-bitových registrů. K těmto registrům může debugger přistoupit prostřednictvím \acs{JTAG} protokolu a následně \acs{DMI} rozhraní, jak je možné vidět na blokovém schématu na obrázku \ref{fig:blok_sch_risc-v_dbg}. Rozhraní \acs{DMI} je definováno jako 41-bitový registr, který obsahuje 7-bitovou adresu zvoleného registru, data pro zápis či čtení z registru a dvoubitovou hodnotu \textit{op} (operace). Bitová pole registru jsou znázorněna tabulkou \ref{tab:dmi_access}. \cite{risc-v_dbg}
 
 \begin{table}[H]
-  \caption{Formát datového registru pro přístup k registrům testovacího systému. \cite{risc-v_dbg}}
+  \caption{Formát registru pro přístup k registrům testovacího systému \cite{risc-v_dbg}}
   \begin{center}
   	\small
 	  \begin{tabular}{!{\vrule width 1.2pt}M{2cm}|M{10.5cm}|M{1cm}!{\vrule width 1.2pt}}
@@ -99,7 +99,7 @@ Obecný časový průběh přístupu na danou adresu testovacího systému je zn
   \begin{center}
     \includegraphics[scale=0.61]{obrazky/dmi.pdf}
   \end{center}
-  \caption{Průběh \acs{JTAG} komunikace pro přístup k registru testovacího systému.}
+  \caption{Průběh \acs{JTAG} komunikace pro přístup k registru testovacího systému}
 	\label{fig:dmi}
 \end{figure}
 
@@ -107,7 +107,7 @@ Obecný časový průběh přístupu na danou adresu testovacího systému je zn
 Hodnota operace (\textit{op}) při odeslání požadavku pro přístup k registru testovacího systému může nabývat hodnot  dle tabulky \ref{tab:dmi_access_op}.
 
 \begin{table}[H]
-  \caption{Tabulka možných hodnot operace \acs{DMI} rozhraní. \cite{risc-v_dbg}}
+  \caption{Tabulka možných hodnot operace \acs{DMI} rozhraní \cite{risc-v_dbg}}
   \begin{center}
   	\small
 	  \begin{tabular}{!{\vrule width 1.2pt}M{1.5cm}|M{2cm}|M{8cm}!{\vrule width 1.2pt}}
@@ -133,7 +133,7 @@ V případě odpovědi \acs{JTAG} systému může hodnota operace (\textit{op}) 
 Jelikož požadavek je vždy odstartován přechodem stavového automatu do stavu \textit{Update-DR} a návratová hodnota operace je vyhodnocena při průchodu stavem\\ \textit{Capture-DR}, bude čas na vykonání požadavku vždy určený počtem taktů \texttt{TCK} hodinového signálu ve stavu \textit{Run-Test/Idle}.
 
 \begin{table}[!h]
-  \caption{Tabulka možných návratových hodnot operace \acs{DMI} rozhraní. \cite{risc-v_dbg}}
+  \caption{Tabulka možných návratových hodnot operace \acs{DMI} rozhraní \cite{risc-v_dbg}}
   \begin{center}
   	\small
 	  \begin{tabular}{!{\vrule width 1.2pt}M{1.5cm}|M{2cm}|M{8cm}!{\vrule width 1.2pt}}
@@ -158,7 +158,7 @@ Jelikož požadavek je vždy odstartován přechodem stavového automatu do stav
 Pro přístup	na systémovou sběrnici jsou v debug modulu vyhrazeny registry popsané tabulkou \ref{tab:sba_regs}. Řídicí a stavový registr \textit{sbcs} umožňuje nastavení režimu zápisu nebo čtení ze systémové sběrnice, případně také volbu možnosti automatické inkrementace adresy. Registr \textit{sbcs} také indikuje probíhající operaci na systémové sběrnici bitem \textit{sbbusy}. Další důležitou informací uloženou v tomto stavovém registru je šířka systémové sběrnice procesoru, přičemž možné hodnoty jsou 8, 16, 32, 64 nebo 128 bitů. Registr \textit{sbaddress0} slouží k nastavení požadované adresy, na kterou se bude přistupovat, a registr \textit{sbdata0} slouží pro zápis nebo čtení dat. \cite{risc-v_dbg}
 
 \begin{table}[!h]
-  \caption{Tabulka registrů systému pro přístup na systémovou sběrnici. \cite{risc-v_dbg}}
+  \caption{Tabulka registrů systému pro přístup na systémovou sběrnici \cite{risc-v_dbg}}
   \begin{center}
   	\small
 	  \begin{tabular}{!{\vrule width 1.2pt}M{1.6cm}|M{1cm}|M{11cm}!{\vrule width 1.2pt}}
@@ -187,7 +187,7 @@ Pokud je režim zápisu již nastaven, je možné provést samotný zápis, jeho
   \begin{center}
     \includegraphics[scale=0.6]{obrazky/dmi_w_split.pdf}
   \end{center}
-  \caption{Průběh \acs{JTAG} komunikace pro zápis na systémovou sběrnici.}
+  \caption{Průběh \acs{JTAG} komunikace pro zápis na systémovou sběrnici}
 	\label{fig:dmi_w}
 \end{figure}
 
@@ -200,7 +200,7 @@ Pro aktivaci režimu čtení ze systémové sběrnice je třeba zapsat do řídi
   \begin{center}
     \includegraphics[scale=0.6]{obrazky/dmi_r_split.pdf}
   \end{center}
-  \caption{Průběh \acs{JTAG} komunikace pro zápis na systémovou sběrnici.}
+  \caption{Průběh \acs{JTAG} komunikace pro zápis na systémovou sběrnici}
 	\label{fig:dmi_r}
 \end{figure}
 
@@ -212,7 +212,7 @@ V tabulce \ref{tab:ri5cy_bus} jsou obecně popsány jednotlivé signály systém
 
 \begin{table}[H]
 	\FloatBarrier
-  \caption{Tabulka popisu signálů systémové sběrnice PULP RICS-V. \cite{ri5cy}}
+  \caption{Tabulka popisu signálů systémové sběrnice PULP RICS-V \cite{ri5cy}}
   \begin{center}
   	\small
 	  \begin{tabular}{!{\vrule width 1.2pt}M{2.2cm}|M{1.5cm}|M{1.8cm}|M{7cm}!{\vrule width 1.2pt}}
@@ -248,7 +248,7 @@ Obecný průběh přístupu na systémovou sběrnici je zobrazen na obrázku \re
   \begin{center}
     \includegraphics[scale=0.79]{obrazky/ri5cy_bus_basic.png}
   \end{center}
-  \caption{Základní sekvence přístupu na systémovou sběrnici \cite{ri5cy}}
+  \caption{Základní průběh sekvence přístupu na systémovou sběrnici \cite{ri5cy}}
 	\label{fig:ri5cy_bus_basic}
 \end{figure}
 
@@ -258,7 +258,7 @@ Na sběrnici může nastat také případ, kdy \textit{slave} nemůže odpověd�
   \begin{center}
     \includegraphics[scale=0.99]{obrazky/ri5cy_bus_slow_res.png}
   \end{center}
-  \caption{Sekvence přístupu na systémovou sběrnici se zpožděnou odezvou \textit{slave} modulu \cite{ri5cy}}
+  \caption{Průběh sekvence přístupu na systémovou sběrnici se zpožděnou odezvou \textit{slave} modulu \cite{ri5cy}}
 	\label{fig:ri5cy_bus_slow_res}
 \end{figure}
 

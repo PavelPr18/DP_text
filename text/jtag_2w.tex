@@ -11,7 +11,7 @@ Dvouvodičová varianta podporuje zapojení ve hvězdicové topologii, jak je vi
   \begin{center}
     \includegraphics[scale=0.9]{obrazky/Example_of_reduced_pin_count_JTAG_interface.pdf}
   \end{center}
-  \caption{Blokové schéma hvězdicové topologie \acs{JTAG} rozhraní ve dvouvodičové variantě. \cite{JTAG}.}
+  \caption{Blokové schéma dvouvodičové hvězdicové topologie \acs{JTAG} rozhraní \cite{JTAG}}
 	\label{fig:star2_sch}
 \end{figure}
 
@@ -24,7 +24,7 @@ Pro dvouvodičovou variantu \acs{JTAG} komunikace je zapotřebí odesílat hodno
   \begin{center}
     \includegraphics[scale=0.81]{obrazky/cJTAG_oscan.pdf}
   \end{center}
-  \caption{Průběh serializace \acs{JTAG} signálů v OSCAN1 formátu.}
+  \caption{Průběh serializace \acs{JTAG} signálů v OSCAN1 formátu}
 	\label{fig:oscan}
 \end{figure}
     
@@ -35,7 +35,7 @@ Při komunikaci pomocí dvouvodičového \acs{JTAG} rozhraní se stává pin \te
   \begin{center}
     \includegraphics[scale=0.75]{obrazky/cJTAG_oscan_drive.pdf}
   \end{center}
-  \caption{Průběh buzení \texttt{\acs{TMSC}} pinu v OSCAN1 formátu.}
+  \caption{Průběh buzení \texttt{\acs{TMSC}} pinu v OSCAN1 formátu}
 	\label{fig:oscan_drive}
 \end{figure}
 
@@ -50,7 +50,7 @@ Aktivační sekvence se skládá ze dvou hlavních částí a je uvedena na obr�
   \begin{center}
     \includegraphics[scale=0.7]{obrazky/cJTAG_selection.pdf}
   \end{center}
-  \caption{Průběh aktivační sekvence pro dvouvodičovou variantu \acs{JTAG} protokolu.}
+  \caption{Průběh aktivační sekvence pro dvouvodičovou variantu \acs{JTAG} protokolu}
 	\label{fig:cJTAG_sel}
 \end{figure}
 
@@ -81,6 +81,8 @@ Sekvence výběru varianty \acs{JTAG} protokolu je zobrazena v druhé části ob
   	\small
 	  \begin{tabular}{!{\vrule width 1.2pt}c|c|c!{\vrule width 1.2pt}}
 	    \noalign{\hrule height 1.2pt}
+				\multicolumn{3}{!{\vrule width 1.2pt}c!{\vrule width 1.2pt}}{Selection sequence}\\
+				\hline
 				\acl{OAC} (\acs{OAC}) [4] & \acl{EC} (\acs{EC}) [4] & \acl{CP} (\acs{CP}) [4-n]\\
 			\noalign{\hrule height 1.2pt}
 		\end{tabular}
@@ -92,7 +94,7 @@ Sekvence výběru varianty \acs{JTAG} protokolu je zobrazena v druhé části ob
 První část sekvence má konstantní délku 4 bity. První dva bity musí mít pro správnou aktivaci hodnotu log. \texttt{0}. Další dva bity definují výběr topologie, na které je \acs{JTAG} zařízení připojeno. Na výběr je možnost sériové topologie, tedy čtyřvodičové zapojení s jedním nebo více zařízeními zapojenými do série. Další možností je zapojení ve hvězdicové topologii, a to ve dvou nebo čtyřvodičové variantě. Pro navržené řešení je podstatná sériová topologie a dvouvodičová varianta hvězdicové topologie, které odpovídají hodnotám \acs{OAC} dle tabulky \ref{tab:oac}. \cite{IEEE_1149-7}
 
 \begin{table}[!h]
-  \caption{Tabulka významu OAC hodnot. \cite{IEEE_1149-7}}
+  \caption{Tabulka významu OAC hodnot \cite{IEEE_1149-7}}
   \begin{center}
   	\small
 	  \begin{tabular}{!{\vrule width 1.2pt}c|c!{\vrule width 1.2pt}}
@@ -120,11 +122,13 @@ Poslední část aktivační sekvence slouží k prodloužení sekvence ze stran
 Formát této části sekvence je zobrazen v tabulce \ref{tab:cJTAG_sel_cp}. Jednobitová hodnota první části \textit{Preamble} je \acs{JTAG} systémem ignorována a na její hodnotě nezáleží. Nicméně je doporučeno, aby byla tato hodnota stejná jako hodnota prvního bitu následující části \textit{Body}. Tato perioda hodinového signálu \texttt{\acs{TCKC}} může sloužit debuggeru jako čas pro změnu zdroje buzení \texttt{\acs{TMSC}} pinu. Následuje část těla kontrolní části sekvence, která může nabývat hodnot dle tabulky \ref{tab:cp_body}, kde je definován také význam těchto hodnot. Poslední částí je jednobitová hodnota \textit{Postamble}, která je \acs{JTAG} systémem také ignorována, přičemž je doporučeno použít stejnou hodnotu jako poslední bit části \textit{Body}. \cite{IEEE_1149-7}              
 
 \begin{table}[H]
-  \caption{Formát kontrolní části sekvence pro výběr varianty \acs{JTAG} protokolu. \cite{IEEE_1149-7}}
+  \caption{Formát kontrolní části sekvence pro výběr varianty \acs{JTAG} protokolu \cite{IEEE_1149-7}}
   \begin{center}
   	\small
 	  \begin{tabular}{!{\vrule width 1.2pt}c|c|c!{\vrule width 1.2pt}}
 	    \noalign{\hrule height 1.2pt}
+				\multicolumn{3}{!{\vrule width 1.2pt}c!{\vrule width 1.2pt}}{Check packet}\\
+				\hline
 				Preamble [1] & Body [2-n] & Postamble [1]\\
 			\noalign{\hrule height 1.2pt}
 		\end{tabular}
@@ -133,7 +137,7 @@ Formát této části sekvence je zobrazen v tabulce \ref{tab:cJTAG_sel_cp}. Jed
 \end{table}
 
 \begin{table}[H]
-  \caption{Tabulka významu CP hodnot. \cite{IEEE_1149-7}}
+  \caption{Tabulka významu CP hodnot \cite{IEEE_1149-7}}
   \begin{center}
   	\small
 	  \begin{tabular}{!{\vrule width 1.2pt}c|c|c!{\vrule width 1.2pt}}
@@ -158,7 +162,7 @@ Jelikož navrženým systémem je podporováno pouze prodloužení aktivační s
   \begin{center}
     \includegraphics[scale=0.66]{obrazky/cJTAG_sel_sequence_cp_nop.pdf}
   \end{center}
-  \caption{Průběh kontrolní části aktivační sekvence varianty \acs{JTAG} protokolu.}
+  \caption{Průběh kontrolní části aktivační sekvence}
 	\label{fig:cJTAG_sel_cp_nop}
 \end{figure}
 
@@ -183,7 +187,7 @@ Navržený obvod je taktován pouze testovacím hodinovým signálem \texttt{\ac
   \begin{center}
     \includegraphics[scale=0.76]{obrazky/cJTAG_bridge.pdf}
   \end{center}
-  \caption{Principiální schéma navrženého modulu pro převod na čtyřvodičové \acs{JTAG} rozhraní.}
+  \caption{Schéma navrženého modulu pro převod na čtyřvodičové \acs{JTAG} rozhraní}
 	\label{fig:cJTAG_bridge}
 \end{figure}
 
@@ -201,7 +205,7 @@ Jelikož pro návrh popsaný v této kapitole je uvažována pouze detekce tří
   \begin{center}
     \includegraphics[scale=0.7]{obrazky/cJTAG_escape_circuit.pdf}
   \end{center}
-  \caption{Schéma obvodu pro detekci úvodní sekvence pro přepnutí \acs{JTAG} protokolu.}
+  \caption{Schéma obvodu pro detekci úvodní sekvence pro přepnutí \acs{JTAG} protokolu}
 	\label{fig:cJTAG_escape_circuit}
 \end{figure}
 
@@ -219,7 +223,7 @@ Hodnota přijatá posuvným registrem je porovnávána se dvěma konstantami, kt
   \begin{center}
     \includegraphics[scale=0.78]{obrazky/cJTAG_sel_oac_ec_circuit.pdf}
   \end{center}
-  \caption{Schéma obvodu pro zpracování sekvence pro výběr varianty \acs{JTAG} protokolu.}
+  \caption{Schéma obvodu pro zpracování sekvence výběru varianty \acs{JTAG} protokolu}
 	\label{fig:cJTAG_sel_oac_ec_circuit}
 \end{figure}
 
@@ -238,7 +242,7 @@ Logické hradlo na výstupu registru pro nastavení \texttt{online\_i} signálu 
   \begin{center}
     \includegraphics[scale=0.78]{obrazky/cJTAG_sel_cp_circuit.pdf}
   \end{center}
-  \caption{Schéma obvodu pro zpracování kontrolní části aktivační sekvence.}
+  \caption{Schéma obvodu pro zpracování kontrolní části aktivační sekvence}
 	\label{fig:cJTAG_sel_cp_circuit}
 \end{figure}
 
@@ -251,7 +255,7 @@ Výchozím stavem je stav \textbf{S\_IDLE}, ve kterém automat setrvává a je d
   \begin{center}
     \includegraphics[scale=0.95]{obrazky/cJTAG_oscan1_fsm.pdf}
   \end{center}
-  \caption{Stavový diagram stavového automatu pro implementaci serializace signálů na pinu \acs{TMSC}.}
+  \caption{Stavový diagram stavového automatu pro implementaci serializace signálů na \texttt{\acs{TMSC}} pinu}
 	\label{fig:cJTAG_oscan1_fsm}
 \end{figure}
 

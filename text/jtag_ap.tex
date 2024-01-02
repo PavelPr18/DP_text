@@ -15,7 +15,7 @@ Délka přenášených dat může být volena jako \textit{Word} (32-bitů), \te
 Varianta protokolu \textbf{Busy-wait} je založena na principu signalizace probíhající operace na sběrnici před odesíláním požadovaných dat. Tato informace je předávána debuggeru jako 3-bitová hodnota \textit{status}, prostřednictvím signálu \texttt{\acs{TDO}}. \textit{Status} může nabývat hodnot dle tabulky \ref{tab:status_vals}, kde je vidět, že je využitý pouze jeden bit ze tří. Důvodem je to, že pole \textit{status} je vysíláno současně s hodnotou \textit{op}, která je vysílána debuggerem, a ta již 3-bitová být musí. Tato varianta protokolu využívá toho, že debugger prochází řídicím stavovým automatem (\acs{TAP}) po spuštění požadavku na systémové sběrnici vždy přes stav \textit{Run-Test/Idle}, kde čeká po několik taktů hodinového signálu \texttt{\acs{TCK}}. Tato prodleva dává možnost systémové sběrnici požadavek dokončit. V případě nedokončeného požadavku je při dalším požadavku signalizováno pomocí hodnoty \textit{status} = 1 (\textit{busy}), že nebude akceptován. \hl{Oproti přístupu na systémovou sběrnici pomocí stávajícího testovacího systému není třeba tento stav nijak resetovat.}
 
 \begin{table}[!h]
-  \caption{Tabulka status hodnot.}
+  \caption{Tabulka možných návratových \textit{status} hodnot navrženého protokolu}
   \begin{center}
   	\small
 	  \begin{tabular}{!{\vrule width 1.2pt}M{1.5cm}|M{1.8cm}|M{9cm}!{\vrule width 1.2pt}}
@@ -37,7 +37,7 @@ Varianta protokolu \textbf{Busy-wait} je založena na principu signalizace prob�
 Význam hodnot \textit{op} (operace) je popsán v tabulce \ref{tab:op_vals}. Výběr, zda bude následovat zápis nebo čtení, je určen nejnižším bitem pole \textit{op}, kde hodnota log. \texttt{0} určuje čtení a log. \texttt{1} zápis, což je shodné s významem signálu \texttt{we} systémové sběrnice popsaného v tabulce \ref{tab:ri5cy_bus}. Hodnota \textit{op} určuje také délku přenášených dat, kterou je tak možné kdykoliv změnit.
 
 \begin{table}[!h]
-  \caption{Tabulka možných hodnot operace.}
+  \caption{Tabulka možných hodnot operace navrženého protokolu}
   \begin{center}
   	\small
 	  \begin{tabular}{!{\vrule width 1.2pt}M{0.7cm}|M{2.5cm}|M{10.4cm}!{\vrule width 1.2pt}}
@@ -74,7 +74,7 @@ Význam hodnot \textit{op} (operace) je popsán v tabulce \ref{tab:op_vals}. Vý
   \begin{center}
     \includegraphics[scale=0.575]{obrazky/busy_w.pdf}
   \end{center}
-  \caption{Průběh zápisu na systémovou sběrnici v Busy-wait módu.}
+  \caption{Průběh zápisu na systémovou sběrnici v Busy-wait módu}
 	\label{fig:busy_w}
 \end{figure}
 
@@ -86,7 +86,7 @@ Význam hodnot \textit{op} (operace) je popsán v tabulce \ref{tab:op_vals}. Vý
   \begin{center}
     \includegraphics[scale=0.68]{obrazky/busy_r.pdf}
   \end{center}
-  \caption{Průběh čtení ze systémové sběrnice v Busy-wait módu.}
+  \caption{Průběh čtení ze systémové sběrnice v Busy-wait módu}
 	\label{fig:busy_r}
 \end{figure}
 
@@ -105,7 +105,7 @@ Na obrázku \ref{fig:wait_w} je znázorněn časový průběh \acs{JTAG} komunik
   \begin{center}
     \includegraphics[scale=0.56]{obrazky/wait_w.pdf}
   \end{center}
-  \caption{Průběh zápisu na systémovou sběrnici v Dynamic-wait módu.}
+  \caption{Průběh zápisu na systémovou sběrnici v Dynamic-wait módu}
 	\label{fig:wait_w}
 \end{figure}
 
@@ -117,7 +117,7 @@ Na obrázku \ref{fig:wait_w} je znázorněn časový průběh \acs{JTAG} komunik
   \begin{center}
     \includegraphics[scale=0.6]{obrazky/wait_r.pdf}
   \end{center}
-  \caption{Průběh čtení ze systémové sběrnice v Dynamic-wait módu.}
+  \caption{Průběh čtení ze systémové sběrnice v Dynamic-wait módu}
 	\label{fig:wait_r}
 \end{figure}
 
