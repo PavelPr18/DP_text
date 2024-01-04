@@ -6,7 +6,8 @@ Cílem práce bylo navrhnout modul podporující komunikaci pomocí dvouvodičov
 
 V úvodní kapitole je uveden princip fungování \acs{JTAG} rozhraní, systém pro testování \acs{RISC-V} procesorů, který je používaný v projektu pro testování daného procesorového jádra, a princip fungování systémové sběrnice tohoto procesoru. Princip fungování testovacího systému v tomto uspořádání a systémové sběrnice bylo třeba nastudovat, aby bylo možné navrhnout sekundární, časově optimalizovaný protokol pro přístup na systémovou sběrnici, který je popsaný v kapitole \ref{jtag_ap}.
 
-Druhá kapitola popisuje vybraný princip komunikace dvouvodičovou variantou \acs{JTAG} protokolu dle standardu IEEE 1149.7 a způsob implementace modulu podporující tento způsob komunikace. Pro zvolení vhodné varianty dvouvodičové \acs{JTAG} komunikace bylo třeba nastudovat příslušné části standardu IEEE 1149.7, což bylo poměrně náročné, protože tento standard je velmi obsáhlý.
+Druhá kapitola popisuje vybraný princip komunikace dvouvodičovou variantou \acs{JTAG} protokolu dle standardu IEEE 1149.7 a způsob implementace modulu podporujícího tento způsob komunikace. Pro zvolení vhodné varianty dvouvodičové \acs{JTAG} komunikace bylo třeba nastudovat příslušné části standardu IEEE 1149.7, což bylo poměrně náročné, protože tento standard je svým rozsahem okolo tisíce stran velmi obsáhlý. 
+%Standard definuje několik úrovní vylepšení funkcionality \acs{JTAG} rozhraní
 
 V navazující diplomové práci bude popsán také způsob implementace hardwarového řešení podporujícího navržený optimalizovaný protokol. Dále bude třeba uvést výsledky funkční simulace některých částí navržených modulů a také ověřit správnou funkci v obvodu \acs{FPGA}.
 
