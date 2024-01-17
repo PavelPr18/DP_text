@@ -128,14 +128,22 @@ První varianta je inspirována řešením původního testovacího systému, kd
 
 Druhá varianta protokolu je nejvíce časově optimální, protože využívá signalizace probíhajícího přístupu na systémovou sběrnici prostřednictvím \texttt{\acs{TDO}}. Díky této vlastnosti také není třeba procházet řídicím stavovým automatem během komunikace a po zpracování požadavku na systémové sběrnici nevzniká výrazná prodleva před započetím další komunikace.
 
-%\section{Implementace}
+\section{Implementace}
+Pro komunikaci s čipem pomocí navrženého optimalizovaného protokolu byla přidána nová \acs{JTAG} instrukce do testovacího systému \acs{RISC-V}. Zápisem instrukce \texttt{0x02} je aktivován modul pro přístup na systémovou sběrnici pomocí navrženého protokolu. Navržené řešení bylo popsáno v jazyce \acs{VHDL} a funkcionalita byla ověřena v simulátoru \texttt{Xcelium}, stejně jako modul pro dvouvodičový \acs{JTAG} protokol popsaný v podkapitole \ref{sec:cJTAG_adapter}.
 
-%\subsection{Busy-wait mód} 
+\subsection{Základní popis návrhu}	\label{subsec:jtag_ap_impl}
+Modul pro komunikaci pomocí navrženého protokolu je rozdělen na dvě části, z důvodu přechodu mezi hodinovými doménami \acs{JTAG} rozhraní (\texttt{\acs{TCK}}) a systémové sběrnice procesoru (\texttt{CLK}).
 
-%\begin{figure}[!h]
-%  \begin{center}
-%    \includegraphics[scale=1.5]{obrazky/busy_wait_fsm.pdf}
-%  \end{center}
-%  \caption{Stavový diagram popisující část hlavního stavového automatu pro busy-wait režim.}
-%	\label{fig:busy_wait_fsm}
-%\end{figure}
+Část obvodu pro zpracování optimalizovaného protokolu je realizována implementací stavového automatu. Tento stavový automat je rozdělený na tři části, pro zpracování varianty protokolu \textbf{Busy-wait}, \textbf{Dynamic-wait} a také pro změnu varianty. Všechny tyto části stavového automatu mají společné stavy \textit{S\_IDLE} a \textit{S\_OP} (operace). Přechody ze stavu \textit{S\_OP} rozdělují stavový automat podle vybrané varianty protokolu a také podle přijaté hodnoty \textit{op} definované tabulkou \ref{tab:op_vals}. Rozdělení stavového automatu v rámci stavu \textit{S\_OP} vyplývá z potřeby vyhodnocení hodnoty \textit{op} = 7 uvozující změnu varianty protokolu.
+
+Tento způsob implementace stavového automatu byl vybrán jako kompromis mezi variantou samostatných stavových automatů pro jednotlivé varianty protokolu a mezi jedním sdíleným stavovým automatem pro obě varianty. Pokud by bylo zvoleno řešení se samostatnými stavovými automaty, byly by stavy ve kterých nejsou přenášena data zbytečně duplikovány (například stav \textit{S\_IDLE}). Toto řešení by také zbytečně navyšovalo počet klopných obvodů potřebný pro definování stavů. V případě sloučení všech stavů pro oba protokoly, by byla kombinační logika stavového automatu výrazně složitější a pravděpodobně i celkově obsáhlejší. Toto řešení by mělo za následek výrazně náročnější implementaci případných změn či vylepšení (například přidání dalšího protokolu). 
+
+\subsection{Varianta protokolu Busy-wait - stavový automat} \label{subsec:busy-wait-fsm}
+
+\begin{figure}[!h]
+  \begin{center}
+    \includegraphics[scale=0.2]{obrazky/busy_fsm_simple.pdf}
+  \end{center}
+  \caption{Stavový diagram popisující část hlavního stavového automatu pro busy-wait režim.}
+	\label{fig:busy_wait_fsm}
+\end{figure}

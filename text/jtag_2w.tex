@@ -166,7 +166,7 @@ Jelikož navrženým systémem je podporováno pouze prodloužení aktivační s
 	\label{fig:cJTAG_sel_cp_nop}
 \end{figure}
 
-\section{Implementace modulu pro dvouvodičový \acs{JTAG} protokol}
+\section{Implementace modulu pro dvouvodičový \acs{JTAG} protokol}	\label{sec:cJTAG_adapter}
 Navržený obvod pro detekci aktivační sekvence a převod vstupních signálů je realizován jako převodník, který je předřazen stávajícímu systému pro testování \acs{RISC-V} popsanému v kapitole \ref{sec:risc-v_dbg} a také navrženému rozšiřujícímu modulu popsanému v kapitole \ref{jtag_ap}. Navržené řešení bylo popsáno v jazyce \acs{VHDL} a jeho funkcionalita byla ověřena pomocí simulace. Verifikační prostředí pro simulaci bylo vytvořeno v jazyce SystemVerilog a simulace obvodu byla provedena v simulátoru \textit{Xcelium} od firmy \textit{Cadence}.
 
 \subsection{Základní popis návrhu}	\label{subsec:cJTAG_adapter}

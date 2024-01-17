@@ -45,7 +45,10 @@
 \contentsline {subsubsection}{Zápis na systémovou sběrnici prostřednictvím Dynamic-wait módu}{41}{section*.110}%
 \contentsline {subsubsection}{Čtení ze systémové sběrnice prostřednictvím Dynamic-wait módu}{41}{section*.113}%
 \contentsline {section}{\numberline {3.2}Zhodnocení návrhu optimalizovaného protokolu pro přístup na systémovou sběrnici}{42}{section.116}%
-\contentsline {chapter}{Závěr}{43}{section*.118}%
-\contentsline {chapter}{Literatura}{44}{section*.120}%
-\contentsline {chapter}{Seznam symbol\r {u} a zkratek}{45}{section*.122}%
-\contentsline {chapter}{Seznam p\v {r}\'{\i }loh}{46}{section*.124}%
+\contentsline {section}{\numberline {3.3}Implementace}{43}{section.117}%
+\contentsline {subsection}{\numberline {3.3.1}Základní popis návrhu}{43}{subsection.118}%
+\contentsline {subsection}{\numberline {3.3.2}Varianta protokolu Busy-wait - stavový automat}{43}{subsection.119}%
+\contentsline {chapter}{Závěr}{45}{section*.123}%
+\contentsline {chapter}{Literatura}{46}{section*.125}%
+\contentsline {chapter}{Seznam symbol\r {u} a zkratek}{47}{section*.127}%
+\contentsline {chapter}{Seznam p\v {r}\'{\i }loh}{48}{section*.129}%
