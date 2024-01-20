@@ -48,7 +48,8 @@
 \contentsline {section}{\numberline {3.3}Implementace}{43}{section.117}%
 \contentsline {subsection}{\numberline {3.3.1}Základní popis návrhu}{43}{subsection.118}%
 \contentsline {subsection}{\numberline {3.3.2}Varianta protokolu Busy-wait - stavový automat}{43}{subsection.119}%
-\contentsline {chapter}{Závěr}{46}{section*.123}%
-\contentsline {chapter}{Literatura}{47}{section*.125}%
-\contentsline {chapter}{Seznam symbol\r {u} a zkratek}{48}{section*.127}%
-\contentsline {chapter}{Seznam p\v {r}\'{\i }loh}{49}{section*.129}%
+\contentsline {subsection}{\numberline {3.3.3}Varianta protokolu Dynamic-wait - stavový automat}{45}{subsection.122}%
+\contentsline {chapter}{Závěr}{48}{section*.126}%
+\contentsline {chapter}{Literatura}{49}{section*.128}%
+\contentsline {chapter}{Seznam symbol\r {u} a zkratek}{50}{section*.130}%
+\contentsline {chapter}{Seznam p\v {r}\'{\i }loh}{51}{section*.132}%
