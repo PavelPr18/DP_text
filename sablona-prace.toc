@@ -35,7 +35,7 @@
 \contentsline {subsubsection}{Část obvodu pro zpracování kontrolní části aktivační sekvence}{32}{section*.88}%
 \contentsline {subsection}{\numberline {2.4.4}Stavový automat pro serializaci signálů čtyřvodičového rozhraní}{34}{subsection.91}%
 \contentsline {section}{\numberline {2.5}Zhodnocení návrhu modulu pro dvouvodičový\\ \acs {JTAG} protokol}{36}{section.94}%
-\contentsline {chapter}{\numberline {3}Popis modulu pro přístup na systémovou sběrnici pomocí JTAG protokolu}{37}{chapter.95}%
+\contentsline {chapter}{\numberline {3}Popis modulu pro přístup na systémovou sběrnici pomocí \acs {JTAG} protokolu}{37}{chapter.95}%
 \contentsline {section}{\numberline {3.1}Návrh optimalizovaného protokolu pro přístup na systémovou sběrnici}{37}{section.96}%
 \contentsline {subsection}{\numberline {3.1.1}Zkrácení adresy a přenášených dat}{37}{subsection.97}%
 \contentsline {subsection}{\numberline {3.1.2}Varianta protokolu Busy-wait}{38}{subsection.98}%
@@ -45,10 +45,10 @@
 \contentsline {subsubsection}{Zápis na systémovou sběrnici prostřednictvím Dynamic-wait módu}{41}{section*.110}%
 \contentsline {subsubsection}{Čtení ze systémové sběrnice prostřednictvím Dynamic-wait módu}{41}{section*.113}%
 \contentsline {section}{\numberline {3.2}Zhodnocení návrhu optimalizovaného protokolu pro přístup na systémovou sběrnici}{42}{section.116}%
-\contentsline {section}{\numberline {3.3}Implementace}{43}{section.117}%
+\contentsline {section}{\numberline {3.3}Implementace modulu pro přístup na systémovou sběrnici pomocí \acs {JTAG} protokolu}{43}{section.117}%
 \contentsline {subsection}{\numberline {3.3.1}Základní popis návrhu}{43}{subsection.118}%
-\contentsline {subsection}{\numberline {3.3.2}Varianta protokolu Busy-wait - stavový automat}{43}{subsection.119}%
-\contentsline {subsection}{\numberline {3.3.3}Varianta protokolu Dynamic-wait - stavový automat}{45}{subsection.122}%
+\contentsline {subsection}{\numberline {3.3.2}Varianta protokolu Busy-wait - stavový automat}{44}{subsection.119}%
+\contentsline {subsection}{\numberline {3.3.3}Varianta protokolu Dynamic-wait - stavový automat}{46}{subsection.122}%
 \contentsline {subsection}{\numberline {3.3.4}Výběr varianty protokolu - stavový automat}{48}{subsection.125}%
 \contentsline {chapter}{Závěr}{49}{section*.131}%
 \contentsline {chapter}{Literatura}{50}{section*.133}%
