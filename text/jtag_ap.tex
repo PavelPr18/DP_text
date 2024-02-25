@@ -149,7 +149,7 @@ Průchody stavovým automatem pro čtení ze systémové sběrnice odpovídají 
 
 \begin{figure}[H]
   \begin{center}
-    \includegraphics[scale=0.22]{obrazky/busy_fsm_simple.pdf}
+    \includegraphics[scale=0.23]{obrazky/busy_fsm_simple.pdf}
   \end{center}
   \caption{Stavový diagram části stavového automatu pro busy-wait mód}
 	\label{fig:busy_wait_fsm}
@@ -176,7 +176,7 @@ Diagram části stavového automatu pro změnu používané varianty protokolu j
 
 \begin{figure}[!h]
   \begin{center}
-    \includegraphics[scale=0.3]{obrazky/cmd_fsm_simple.pdf}
+    \includegraphics[scale=0.26]{obrazky/cmd_fsm_simple.pdf}
   \end{center}
   \caption{Stavový diagram části stavového automatu pro změnu módu}
 	\label{fig:cmd_fsm}
@@ -201,3 +201,55 @@ Diagram části stavového automatu pro změnu používané varianty protokolu j
   \end{center}
 	\label{tab:cmd_vals}
 \end{table}
+
+%\subsection{Modul pro přístup na systémovou sběrnici} \label{subsec:sba2}
+%Pro přístup na systémovou sběrnici byl navržený modul, který je na sběrnici připojen jako \textit{master} a může tak zapisovat nebo číst z registrů adresního prostoru. Tento modul realizuje rozhraní mezi stavovým automatem pro zpracování optimalizovaného protokolu, popsaným v této podkapitole a systémovou sběrnicí popsanou v podkapitole \ref{sec:sys_bus}.
+
+%Komunikace ze systémovou sběrnicí je realizována pomocí stavového automatu
+
+\subsection{Realizace přechodu mezi hodinovými doménami \texttt{\acs{TCK}} a \texttt{SYS\_CLK}} \label{subsec:cdc}
+Při návrhu řešení přechodu mezi hodinovými doménami \acs{JTAG} rozhraní a systémové sběrnice byly uvažovány oba případy rozdílné frekvence hodinových signálů (přechod z pomalejší do rychlejší hodinové domény a naopak). 
+
+Schéma použitého principu přechodu mezi hodinovými doménami je zobrazeno na obrázku \ref{fig:cdc}. Pro přechod mezi hodinovou doménou \acs{JTAG} systému a systémové sběrnice byl zvolen princip použití dvou řídicích signálů \texttt{rq} (požadavek na zpracování zápisu nebo čtení ze systémové sběrnice) a \texttt{ack} (potvrzení dokončení požadavku). Jako zdrojová hodinová doména je uvažována část obvodu sloužící ke zpracování navrženého protokolu, taktovaná hodinovým signálem \acs{JTAG} rozhraní \texttt{\acs{TCK}}. Cílovou hodinovou doménou je pak systémová sběrnice, která je taktována hodinovým signálem \texttt{SYS\_CLK}, který má zpravidla vyšší frekvenci. Řídicí signály \texttt{rq} a \texttt{ack} jsou v jejich cílové doméně synchronizovány pomocí dvojitého vzorkovače. Datové signály jsou v jejich cílové hodinové doméně vzorkovány, pro zaručení jejich neměnnosti při dalším zpracování.
+
+Část pro obsluhu systémové sběrnice je realizována jako \textit{master} modul na systémové sběrnici, jak je naznačeno signály systémové sběrnice ve schématu \ref{fig:cdc_circuit}. V této části obvodu je také realizováno rozšíření adresy na 32 bitů a dekódování signálu \texttt{sys\_be} systémové sběrnice podle délky přenášených dat a adresy.
+
+\begin{figure}[H]
+  \begin{center}
+    \includegraphics[scale=0.67]{obrazky/cdc_circuit_v2.pdf}
+  \end{center}
+  \caption{Zjednodušené schéma principu přechodu mezi hodinovými doménami}
+	\label{fig:cdc_circuit}
+\end{figure}
+
+Časový průběh zpracování požadavku na systémovou sběrnici je znázorněn na obrázku \ref{fig:cdc}. Požadavek je zahájen pulsem na signálu \texttt{rq\_start} jakožto výstupem stavového automatu pro zpracování optimalizovaného protokolu. S dalším hodinovým taktem \texttt{\acs{TCK}} je nastaven řídicí signál \texttt{rq}, který je v cílové hodinové doméně systémové sběrnice synchronizován během dvou period hodinového signálu \texttt{SYS\_CLK}. Následně probíhá přístup na systémovou sběrnici, jak je uvedeno v podkapitole \ref{subsec:sys_bus_access}, což je na obrázku naznačeno signály \texttt{req}, \texttt{gnt} a \texttt{rvalid}. Po dokončení požadavku na systémovou sběrnici (signál \texttt{rvalid}) je vystaven  řídicí signál \texttt{ack} potvrzující dokončení požadavku. Signál \texttt{ack} je v hodinové doméně \acs{JTAG} systému synchronizován během dvou period hodinového signálu \texttt{\acs{TCK}}. Řídicí signály jsou ve stejném pořadí dále uvedeny zpět na hodnotu log. \texttt{0}.  
+
+\begin{figure}[H]
+  \begin{center}
+    \includegraphics[scale=0.55]{obrazky/cdc.pdf}
+  \end{center}
+  \caption{Průběh přechodu mezi hodinovými doménami}
+	\label{fig:cdc}
+\end{figure}
+
+\subsubsection{Stavový automat na straně \acs{JTAG} systému}
+Na straně hodinové domény \texttt{\acs{TCK}} je přechod do hodinové domény systémové sběrnice realizován stavovým automatem, jehož stavový diagram je zobrazen na obrázku \ref{fig:cdc_apc_fsm}. Jakmile je hlavním stavovým automatem, popsaným v této kapitole, nastaven signál \texttt{rq\_start} přechází automat do stavu \textit{S\_REQ} čímž je nastaven řídicí signál \texttt{rq}. Nastaven je také interní signál \texttt{busy\_i}, který realizuje zpětnou vazbu indikující probíhající operaci na sběrnici. Jakmile je přijata a synchronizována hodnota log. \texttt{1} na řídicím signálu \texttt{ack} přechází automat do stavu \textit{S\_ACK}. V rámci tohoto přechodu jsou navzorkována data přečtená ze systémové sběrnice. Ve stavu \textit{S\_ACK} je řídicí signál \texttt{rq} uveden zpět do stavu log. \texttt{0}. Přechod do výchozího stavu \textit{S\_IDLE} je proveden na základě přijetí log. \texttt{0} na řídicím signálu \texttt{ack}. Interní signál \texttt{busy\_i} je nastaven zpět na hodnotu log. \texttt{0} až v tomto stavu.
+
+\begin{figure}[H]
+  \begin{center}
+    \includegraphics[scale=0.27]{obrazky/cdc_apc_fsm_v2.pdf}
+  \end{center}
+  \caption{Stavový diagram stavového automatu pro realizaci přechodu mezi hodinovými doménami - strana \acs{JTAG} systému}
+	\label{fig:cdc_apc_fsm}
+\end{figure}
+
+\subsubsection{Stavový automat na straně systémové sběrnice}
+Na straně hodinové domény \texttt{SYS\_CLK} je implementován podobný stavový automat jako na straně \texttt{\acs{TCK}} domény. Stavový diagram je zobrazen na obrázku \ref{fig:cdc_sba_fsm}. Přechod z výchozího stavu do stavu \textit{S\_REQ} je proveden na základě přijetí požadavku na řídicím signálu \texttt{rq} a provedení synchronizace. V rámci tohoto přechodu je navzorkována adresa, zapisovaná data, signál \texttt{we} pro určení zápisu nebo čtení a délka přístupu na sběrnici, jak je vidět na obrázku \ref{fig:cdc_circuit}. Ve stavu \textit{S\_REQ} je nastaven signál požadavku na systémovou sběrnici \texttt{sys\_req}. Jakmile systémová sběrnice potvrdí zpracování požadavku nastavením signálu \texttt{sys\_gnt} přechází automat do stavu \textit{S\_WAIT}, ve kterém je signál požadavku \texttt{sys\_req} nastaven zpět na hodnotu log. \texttt{0}. V tomto stavu automat setrvává do doby než je operace na sběrnici zcela dokončena, což je potvrzeno příjmem log. \texttt{1} na signálu \texttt{sys\_rvalid}. V této fázi přechází stavový automat do stavu \textit{S\_ACK} a jsou navzorkována data přečtená ze systémové sběrnice, aby zůstala neměnná dokud nejsou navzorkována na straně \texttt{\acs{TCK}} hodinové domény. Ve stavu \textit{S\_ACK} je vystaven potvrzovací signál \texttt{ack}. Do výchozího stavu \textit{S\_IDLE} automat přechází na základě přijetí log. \texttt{0} na řídicím signálu \texttt{rq} a provedení synchronizace. Tímto je řídící signál \texttt{ack} nastaven zpět na hodnotu log. \texttt{0} a celý cyklus na straně hodinové domény \texttt{SYS\_CLK} je dokončen.
+
+\begin{figure}[H]
+  \begin{center}
+    \includegraphics[scale=0.22]{obrazky/cdc_sba_fsm_v2.pdf}
+  \end{center}
+  \caption{Stavový diagram stavového automatu pro realizaci přechodu mezi hodinovými doménami - strana systémové sběrnice}
+	\label{fig:cdc_sba_fsm}
+\end{figure}

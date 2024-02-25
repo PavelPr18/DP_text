@@ -219,7 +219,7 @@ Obvod obsahuje 8-bitový posuvný registr (\texttt{sel\_sreg}) pro příjem hodn
 
 Hodnota přijatá posuvným registrem je porovnávána se dvěma konstantami, které určují zvolenou variantu \acs{JTAG} protokolu. Pokud je zvolena dvouvodičová varianta, je nastaven signál \texttt{jtag\_2w\_en} povolující funkcionalitu pro zpracování komunikace v dvouvodičové variantě. Zejména se jedná o multiplexory propojující \acs{JTAG} signály pro další zpracování a stavový automat pro  zpracování formátu OSCAN1 popsaného v podkapitole \ref{sec:oscan1}. Pokud je hodnota posuvného registru shodná s jednou z konstant a čítač napočítal 8 nasunutých bitů, je hodnota signálu \texttt{sel\_seq\_match} nastavena do log. \texttt{1} a je tak aktivován obvod pro zpracování poslední části aktivační sekvence, jehož schéma je uvedeno na obrázku \ref{fig:cJTAG_sel_cp_circuit}. 
 
-\begin{figure}[H]s
+\begin{figure}[H]
   \begin{center}
     \includegraphics[scale=0.78]{obrazky/cJTAG_sel_oac_ec_circuit.pdf}
   \end{center}

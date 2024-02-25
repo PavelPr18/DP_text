@@ -50,7 +50,10 @@
 \contentsline {subsection}{\numberline {3.3.2}Varianta protokolu Busy-wait - stavový automat}{44}{subsection.119}%
 \contentsline {subsection}{\numberline {3.3.3}Varianta protokolu Dynamic-wait - stavový automat}{46}{subsection.122}%
 \contentsline {subsection}{\numberline {3.3.4}Výběr varianty protokolu - stavový automat}{48}{subsection.125}%
-\contentsline {chapter}{Závěr}{49}{section*.131}%
-\contentsline {chapter}{Literatura}{50}{section*.133}%
-\contentsline {chapter}{Seznam symbol\r {u} a zkratek}{51}{section*.135}%
-\contentsline {chapter}{Seznam p\v {r}\'{\i }loh}{52}{section*.137}%
+\contentsline {subsection}{\numberline {3.3.5}Realizace přechodu mezi hodinovými doménami \texttt {\acs {TCK}} a \texttt {SYS\_CLK}}{49}{subsection.130}%
+\contentsline {subsubsection}{Stavový automat na straně \acs {JTAG} systému}{50}{section*.135}%
+\contentsline {subsubsection}{Stavový automat na straně systémové sběrnice}{51}{section*.138}%
+\contentsline {chapter}{Závěr}{53}{section*.142}%
+\contentsline {chapter}{Literatura}{54}{section*.144}%
+\contentsline {chapter}{Seznam symbol\r {u} a zkratek}{55}{section*.146}%
+\contentsline {chapter}{Seznam p\v {r}\'{\i }loh}{56}{section*.148}%
