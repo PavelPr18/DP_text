@@ -1,4 +1,41 @@
-\chapter{Návrh SW aplikačního řešení}	\label{sw}
+\chapter{Návrh SW řešení pro komunikaci pomocí optimalizovaného protokolu}	\label{sw}
+Pro komunikaci s HW řešením navrženým v kapitole \ref{jtag_ap} bylo třeba rozšířit testovací software v PC o podporu komunikace pomocí optimalizovaného protokolu. Tato kapitola se zabývá tvorbou softwarových funkcí, které může debugger použít pro přístup na systémovou sběrnici procesoru v čipu. Tyto funkce mohou být použity namísto komunikace pomocí již existujících funkcí využívajících stávajícího systému pro testování popsaného v kapitole \ref{sec:risc-v_dbg}.
 
-\section{FTDI převodník}
 
+\section{Blokové schéma komunikace PC s \acs{FPGA}}
+Pro spojení čipu s testovacím software v PC byla využita dodaná vývojová deska. Pro účely testování je možné na desce osadit výměnné moduly obsahující již vyrobený integrovaný obvod nebo obvod \acs{FPGA}. V případě testování funkčnosti navrženého řešení, představeného v kapitolách \ref{jtag_2w} a \ref{jtag_ap}, je na vývojové desce osazen modul TE0725 od firmy \textit{Trenz electronic}, osazený FPGA obvodem AMD Artix™ 7 XC7A100T. Pro převod USB rozhraní na \acs{JTAG} protokol je na vývojové desce osazen převodník \textit{FT4232H} od výrobce FTDI nebo je možné využít programovacího kabelu \textit{HS2} od společnosti \textit{Digilent}, který se používá také k nahrávání \acs{FPGA} obvodu. Obě možnosti spojení \acs{FPGA} s PC jsou naznačeny na obrázku \ref{fig:block_diag}, přičemž výběr způsobu komunikace je umožněn přepnutím přepínačů na desce. Signály \acs{JTAG} rozhraní mohou být připojeny do FPGA modulu na příslušné piny uvedené v tabulce \ref{tab:jtag_dev_board}. Toto propojení signálů odpovídá dané konfiguraci nahrané v FPGA.
+
+\begin{figure}[H]
+  \begin{center}
+    \includegraphics[scale=0.9]{obrazky/block_diagram_v2.pdf}
+  \end{center}
+  \caption{Blokové schéma spojení \acs{JTAG} systému s debuggerem}
+	\label{fig:block_diag}
+\end{figure}
+
+
+\begin{table}[H]
+  \caption{Tabulka propojení \acs{JTAG} signálů}
+  \begin{center}
+  	\small
+	  \begin{tabular}{!{\vrule width 1.2pt}c|c|c|c|c!{\vrule width 1.2pt}}
+	    \noalign{\hrule height 1.2pt}
+	    Signál & FTDI pin & HS2 pin & TE0725 pin & FPGA pin\\
+	    \noalign{\hrule height 1.2pt}
+			\texttt{\acs{TCK}} & BDBUS0 (22) & \acs{TCK} & J1 - 42 & E7\\
+			\hline
+			\texttt{\acs{TMS}} & BDBUS3 (25) & \acs{TMS} & J1 - 48 & D8\\
+			\hline
+			\texttt{\acs{TDI}} & BDBUS1 (24) & \acs{TDI} & J1 - 47 & C7\\
+			\hline
+			\texttt{\acs{TDO}} & BDBUS2 (23) & \acs{TDO} & J1 - 44 & F6\\
+			\hline
+			\noalign{\hrule height 1.2pt}
+		\end{tabular}
+  \end{center}
+	\label{tab:jtag_dev_board}
+\end{table}
+
+\section{FTDI převodník FT4232H}
+Převodník FT4232H disponuje 4 kanály, které umožňují komunikaci s různými sériovými sběrnicemi jako je například UART, SPI, I\textsuperscript{2}C a \acs{JTAG}. Komunikace pomocí \acs{JTAG} rozhraní je realizována prostřednictvím víceúčelového generátoru sériových rozhraní \acs{MPSSE} (\textit{\acl{MPSSE}}). 
+ 

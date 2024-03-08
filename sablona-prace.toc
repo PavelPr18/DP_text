@@ -53,9 +53,10 @@
 \contentsline {subsection}{\numberline {3.3.5}Realizace přechodu mezi hodinovými doménami \texttt {\acs {TCK}} a \texttt {SYS\_CLK}}{49}{subsection.130}%
 \contentsline {subsubsection}{Stavový automat na straně \acs {JTAG} systému}{50}{section*.135}%
 \contentsline {subsubsection}{Stavový automat na straně systémové sběrnice}{51}{section*.138}%
-\contentsline {chapter}{\numberline {4}Návrh SW aplikačního řešení}{53}{chapter.141}%
-\contentsline {section}{\numberline {4.1}FTDI převodník}{53}{section.142}%
-\contentsline {chapter}{Závěr}{54}{section*.144}%
-\contentsline {chapter}{Literatura}{55}{section*.146}%
-\contentsline {chapter}{Seznam symbol\r {u} a zkratek}{56}{section*.148}%
-\contentsline {chapter}{Seznam p\v {r}\'{\i }loh}{57}{section*.150}%
+\contentsline {chapter}{\numberline {4}Návrh SW řešení pro komunikaci pomocí optimalizovaného protokolu}{53}{chapter.141}%
+\contentsline {section}{\numberline {4.1}Blokové schéma komunikace PC s \acs {FPGA}}{53}{section.142}%
+\contentsline {section}{\numberline {4.2}FTDI převodník FT4232H}{54}{section.147}%
+\contentsline {chapter}{Závěr}{55}{section*.149}%
+\contentsline {chapter}{Literatura}{56}{section*.151}%
+\contentsline {chapter}{Seznam symbol\r {u} a zkratek}{58}{section*.153}%
+\contentsline {chapter}{Seznam p\v {r}\'{\i }loh}{59}{section*.155}%
