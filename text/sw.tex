@@ -3,7 +3,7 @@ Pro komunikaci s HW řešením navrženým v kapitole \ref{jtag_ap} bylo třeba 
 
 
 \section{Blokové schéma komunikace PC s \acs{FPGA}}
-Pro spojení čipu s testovacím software v PC byla využita dodaná vývojová deska. Pro účely testování je možné na desce osadit výměnné moduly obsahující již vyrobený integrovaný obvod nebo obvod \acs{FPGA}. V případě testování funkčnosti navrženého řešení, představeného v kapitolách \ref{jtag_2w} a \ref{jtag_ap}, je na vývojové desce osazen modul TE0725 od firmy \textit{Trenz electronic}, osazený FPGA obvodem AMD Artix™ 7 XC7A100T. Pro převod USB rozhraní na \acs{JTAG} protokol je na vývojové desce osazen převodník \textit{FT4232H} od výrobce FTDI nebo je možné využít programovacího kabelu \textit{HS2} od společnosti \textit{Digilent}, který se používá také k nahrávání \acs{FPGA} obvodu. Obě možnosti spojení \acs{FPGA} s PC jsou naznačeny na obrázku \ref{fig:block_diag}, přičemž výběr způsobu komunikace je umožněn přepnutím přepínačů na desce. Signály \acs{JTAG} rozhraní mohou být připojeny do FPGA modulu na příslušné piny uvedené v tabulce \ref{tab:jtag_dev_board}. Toto propojení signálů odpovídá dané konfiguraci nahrané v FPGA.
+Pro spojení čipu s testovacím software v PC byla využita dodaná vývojová deska. Pro účely testování je možné na desce osadit výměnné moduly obsahující již vyrobený integrovaný obvod nebo obvod \acs{FPGA}. V případě testování funkčnosti navrženého řešení, představeného v kapitolách \ref{jtag_2w} a \ref{jtag_ap}, je na vývojové desce osazen modul TE0725 od firmy \textit{Trenz electronic}, osazený FPGA obvodem AMD Artix™ 7 XC7A100T. Pro převod USB rozhraní na \acs{JTAG} protokol je na vývojové desce osazen převodník \textit{FT4232H} od výrobce FTDI nebo je možné využít programovacího kabelu \textit{HS2} od společnosti \textit{Digilent}, který se používá také k nahrávání \acs{FPGA} obvodu. Obě možnosti spojení \acs{FPGA} s PC jsou naznačeny na obrázku \ref{fig:block_diag}, přičemž výběr způsobu komunikace je umožněn přepnutím přepínačů na desce. Signály \acs{JTAG} rozhraní mohou být připojeny do FPGA modulu na příslušné piny uvedené v tabulce \ref{tab:jtag_dev_board}. Toto propojení signálů odpovídá dané konfiguraci nahrané v FPGA. \cite{TE0725_TRM}  \cite{TE0725_sch} \cite{FTDI4232H} \cite{HS2}
 
 \begin{figure}[H]
   \begin{center}
@@ -13,9 +13,8 @@ Pro spojení čipu s testovacím software v PC byla využita dodaná vývojová 
 	\label{fig:block_diag}
 \end{figure}
 
-
 \begin{table}[H]
-  \caption{Tabulka propojení \acs{JTAG} signálů}
+  \caption{Tabulka propojení \acs{JTAG} signálů \cite{TE0725_sch} \cite{FTDI4232H} \cite{HS2}}
   \begin{center}
   	\small
 	  \begin{tabular}{!{\vrule width 1.2pt}c|c|c|c|c!{\vrule width 1.2pt}}
@@ -36,6 +35,84 @@ Pro spojení čipu s testovacím software v PC byla využita dodaná vývojová 
 	\label{tab:jtag_dev_board}
 \end{table}
 
-\section{FTDI převodník FT4232H}
-Převodník FT4232H disponuje 4 kanály, které umožňují komunikaci s různými sériovými sběrnicemi jako je například UART, SPI, I\textsuperscript{2}C a \acs{JTAG}. Komunikace pomocí \acs{JTAG} rozhraní je realizována prostřednictvím víceúčelového generátoru sériových rozhraní \acs{MPSSE} (\textit{\acl{MPSSE}}). 
- 
+%\section{Využití OpenOCD ke komunikaci pomocí dvouvodičového \acs{JTAG} protokolu}
+
+\section{FTDI převodník FT4232H}	\label{sec:ft4232h}
+Převodník FT4232H disponuje 4 kanály, které umožňují komunikaci s různými sériovými sběrnicemi jako je například UART, SPI, I\textsuperscript{2}C a \acs{JTAG}. Komunikace pomocí \acs{JTAG} rozhraní je realizována prostřednictvím víceúčelového generátoru sériových rozhraní \acs{MPSSE} (\textit{\acl{MPSSE}}), jehož využití je možné na kanálech A a B. Signály \acs{JTAG} rozhraní jsou na vývojové desce připojeny na kanál B dle tabulky \ref{tab:jtag_dev_board}. \cite{FTDI4232H}
+
+\subsection{Příkazy víceúčelového sériového generátoru \acs{MPSSE}}
+Víceúčelový generátor sériových rozhraní \acs{MPSSE} je řízen pomocí zápisu definovaných příkazů prostřednictvím USB. Příkazy pro \acs{MPSSE} jsou kódovány jako jeden bajt a každý bit má definovaný význam, jenž je uvedený v tabulce \ref{tab:mpsse_cmd}. \cite{MPSSE_cmd}
+
+\begin{table}[H]
+  \caption{Definice příkazů pro \acs{MPSSE} \cite{MPSSE_cmd}}
+  \begin{center}
+  	\small
+	  \begin{tabular}{!{\vrule width 1.2pt}c|c!{\vrule width 1.2pt}}
+	    \noalign{\hrule height 1.2pt}
+	    Bit & Význam\\
+	    \noalign{\hrule height 1.2pt}
+			\multirow{2}{*}{0} & log. \texttt{0} = data na \texttt{\acs{TDI}}/\texttt{\acs{TMS}} pinu jsou vystavena na nástupnou hranu \texttt{\acs{TCK}}\\
+			%\cline{2-2}
+			& log. \texttt{1} = data na \texttt{\acs{TDI}}/\texttt{\acs{TMS}} pinu jsou vystavena na sestupnou hranu \texttt{\acs{TCK}}\\
+			\hline
+			\multirow{2}{*}{1} & log. \texttt{0} = režim odesílání a přijímání dat po bajtech\\
+			& log. \texttt{1} = režim odesílání a přijímání dat po bitech\\
+			\hline
+			\multirow{2}{*}{2} & log. \texttt{0} = data na \texttt{\acs{TDO}} pinu jsou vzorkována na nástupnou hranu \texttt{\acs{TCK}}\\
+			& log. \texttt{1} = data na \texttt{\acs{TDO}} pinu jsou vzorkována na sestupnou hranu \texttt{\acs{TCK}}\\
+			\hline
+			\multirow{2}{*}{3} & log. \texttt{0} = data jsou přenášena od \acs{MSB}\\
+			& log. \texttt{1} = data jsou přenášena od \acs{LSB}\\
+			\hline
+			4 & aktivace zápisu dat na \texttt{\acs{TDI}} pin\\
+			\hline
+			5 & aktivace čtení dat z \texttt{\acs{TDO}} pinu\\
+			\hline
+			6 & aktivace zápisu dat na \texttt{\acs{TMS}} pin\\
+			\hline
+			7 & vždy log. \texttt{0}\\
+			\hline
+			\noalign{\hrule height 1.2pt}
+		\end{tabular}
+  \end{center}
+	\label{tab:mpsse_cmd}
+\end{table}
+
+Pro \acs{JTAG} komunikaci je třeba využít příkazů, které vždy mají tyto vlastnosti: 
+\begin{itemize}
+	\item odesílají data od \acs{LSB} (bit 3 = log. \texttt{1}).
+	\item data na \texttt{\acs{TDI}} a \texttt{\acs{TMS}} pinu se vystavují na sestupnou hranu (bit 0 = log. \texttt{1}).
+	\item data na \texttt{\acs{TDO}} se vzorkují na nástupnou hranu (bit 2 = log. \texttt{0}).
+\end{itemize}
+
+\subsubsection{Formát příkazu \acs{MPSSE}}
+Struktura příkazů pro \acs{MPSSE} generátor a délka jednotlivých částí v bajtech je uvedena v tabulce \ref{tab:mpsse_cmd_format}. První bajt příkazu vždy obsahuje vlastní kód příkazu podle významu uvedeného v tabulce \ref{tab:mpsse_cmd}. Následující bajt uvádí počet taktů \texttt{\acs{TCK}} hodinového signálu, které chceme vygenerovat což odpovídá délce přenesených dat. V případě, že se jedná o příkaz v režimu přenosu po bajtech (bit 1 kódu příkazu nese hodnotu log. \texttt{0}), je délka určena dvěma bajty a výsledné číslo udává počet přenášených bajtů. Maximální počet dat přenesených v rámci jednoho příkazu je tedy \(2^{16} = 65536\) bajtů. Poslední částí struktury příkazu jsou přenášená data dle zvolené délky v případě, že se jedná o příkaz generující zápis.
+
+\begin{table}[!h]
+  \caption{Formát příkazů \acs{MPSSE} \cite{MPSSE_cmd}}
+  \begin{center}
+  	\small
+	  \begin{tabular}{!{\vrule width 1.2pt}c|c!{\vrule width 1.2pt}}
+	    \noalign{\hrule height 1.2pt}
+	    Část příkazu & Počet bajtů\\
+	    \noalign{\hrule height 1.2pt}
+			cmd & 1\\
+			\hline
+			length & 1 nebo 2\\
+			\hline
+			\texttt{\acs{TDI}}/\texttt{\acs{TMS}} data & 1 až 65536\\
+			\hline
+			\noalign{\hrule height 1.2pt}
+		\end{tabular}
+  \end{center}
+	\label{tab:mpsse_cmd_format}
+\end{table}
+
+\section{Návrh funkcí pro komunikaci pomocí optimalizovaného protokolu}
+Dodaný testovací SW využívaný pro komunikaci s čipem prostřednictvím převodníku FT4232H uvedeného v podkapitole \ref{sec:ft4232h} je realizován v jazyce \textit{Python}, proto i rozšiřující funkce pro komunikaci optimalizovaným protokolem byly vyvíjeny v tomto jazyce. Jako nízkoúrovňová knihovna pro odesílání příkazů do FT4232H převodníku je využita knihovna \textit{PyFtdi}.	\cite{PyFtdi_doc}
+
+\subsection{Zápis příkazů pro \acs{MPSSE} do bufferu FTDI převodníku}
+Pro odeslání vykonávaných příkazů prostřednictvím USB je využita metoda \texttt{\_stack\_cmd} třídy \texttt{JtagController}, které jsou předávány jednotlivé bajty podle struktury příkazu uvedené tabulce \ref{tab:mpsse_cmd_format}. Takto odeslané příkazy se zapisují do bufferu FTDI převodníku. Vykonání příkazů obsažených v bufferu je spuštěno voláním metody \texttt{sync} třídy \texttt{JtagController}. Tímto je odstartována komunikace na \acs{JTAG} rozhraní a výstupní buffer je vyprázdněn. V případě, že některý z vykonaných příkazů realizoval čtení z \texttt{\acs{TDO}} pinu jsou vyčtená data uložena do vstupního bufferu. \cite{PyFtdi_doc}
+
+\subsection{Čtení dat z bufferu FTDI převodníku}
+Vyčtení dat přijatých na \texttt{\acs{TDO}} pinu je provedeno voláním metody \texttt{\_read\_from\_buffer} třídy \texttt{JtagController}. Parametrem funkce je počet bitů, které mají být vyčteny. Do vstupního bufferu jsou data zapisována po bajtech za základě vykonání jednotlivých příkazů, a to i případě příkazu    \cite{PyFtdi_doc}
