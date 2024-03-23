@@ -130,6 +130,9 @@
 \pdfmapfile{=vafle.map}
 % pridane balicky
 \usepackage{array}		% hodí se pro změnu tloušťky tabulek
+\usepackage{booktabs}		% hodí se pro změnu tloušťky tabulek
+\usepackage{arydshln}		% hodí se pro změnu tloušťky tabulek
+\usepackage{xcolor}		% hodí se pro změnu tloušťky tabulek
 \newcolumntype{P}[1]{>{\centering\arraybackslash}p{#1}}	% nový typ sloupce odstavcový centrovaný horizontalne
 \newcolumntype{M}[1]{>{\centering\arraybackslash}m{#1}}	% nový typ sloupce odstavcový centrovaný i vetikálně
 \usepackage{amsmath}	% dalsi matematika (např.: prostredi split)
@@ -164,7 +167,7 @@
    
 %% Vložení zadání
 \includepdf[pages=1]%   buďto generovaného informačním systémem
-  {pdf/zadani_sem}% název souboru nesmí obsahovat mezery!
+  {pdf/zadani_dip}% název souboru nesmí obsahovat mezery!
 %% NEBO lze vytvořit prázdný list příkazem ze šablony
 %\patternpage{}%
 %	{\sffamily\Huge\centering ZDE VLOŽIT LIST ZADÁNÍ}%

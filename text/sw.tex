@@ -79,7 +79,7 @@ Víceúčelový generátor sériových rozhraní \acs{MPSSE} je řízen pomocí 
 \end{table}
 
 Pro \acs{JTAG} komunikaci je třeba využít příkazů, které vždy mají tyto vlastnosti: 
-\begin{itemize}
+\begin{itemize}[leftmargin = 2cm]
 	\item odesílají data od \acs{LSB} (bit 3 = log. \texttt{1}).
 	\item data na \texttt{\acs{TDI}} a \texttt{\acs{TMS}} pinu se vystavují na sestupnou hranu (bit 0 = log. \texttt{1}).
 	\item data na \texttt{\acs{TDO}} se vzorkují na nástupnou hranu (bit 2 = log. \texttt{0}).
@@ -96,9 +96,9 @@ Struktura příkazů pro \acs{MPSSE} generátor a délka jednotlivých částí 
 	    \noalign{\hrule height 1.2pt}
 	    Část příkazu & Počet bajtů\\
 	    \noalign{\hrule height 1.2pt}
-			cmd & 1\\
+			\textit{cmd} & 1\\
 			\hline
-			length & 1 nebo 2\\
+			\textit{length} & 1 nebo 2\\
 			\hline
 			\texttt{\acs{TDI}}/\texttt{\acs{TMS}} data & 1 až 65536\\
 			\hline
@@ -109,10 +109,60 @@ Struktura příkazů pro \acs{MPSSE} generátor a délka jednotlivých částí 
 \end{table}
 
 \section{Návrh funkcí pro komunikaci pomocí optimalizovaného protokolu}
-Dodaný testovací SW využívaný pro komunikaci s čipem prostřednictvím převodníku FT4232H uvedeného v podkapitole \ref{sec:ft4232h} je realizován v jazyce \textit{Python}, proto i rozšiřující funkce pro komunikaci optimalizovaným protokolem byly vyvíjeny v tomto jazyce. Jako nízkoúrovňová knihovna pro odesílání příkazů do FT4232H převodníku je využita knihovna \textit{PyFtdi}.	\cite{PyFtdi_doc}
+Dodaný testovací SW využívaný pro komunikaci s čipem prostřednictvím převodníku FT4232H uvedeného v podkapitole \ref{sec:ft4232h} je realizován v jazyce \textit{Python}, proto i rozšiřující funkce pro komunikaci optimalizovaným protokolem byly vyvíjeny v tomto jazyce. Jako nízkoúrovňová knihovna pro odesílání příkazů do FT4232H převodníku je využita knihovna \textit{PyFtdi}.	\cite{PyFtdi} \cite{PyFtdi_doc}
 
 \subsection{Zápis příkazů pro \acs{MPSSE} do bufferu FTDI převodníku}
-Pro odeslání vykonávaných příkazů prostřednictvím USB je využita metoda \texttt{\_stack\_cmd} třídy \texttt{JtagController}, které jsou předávány jednotlivé bajty podle struktury příkazu uvedené tabulce \ref{tab:mpsse_cmd_format}. Takto odeslané příkazy se zapisují do bufferu FTDI převodníku. Vykonání příkazů obsažených v bufferu je spuštěno voláním metody \texttt{sync} třídy \texttt{JtagController}. Tímto je odstartována komunikace na \acs{JTAG} rozhraní a výstupní buffer je vyprázdněn. V případě, že některý z vykonaných příkazů realizoval čtení z \texttt{\acs{TDO}} pinu jsou vyčtená data uložena do vstupního bufferu. \cite{PyFtdi_doc}
+Pro odeslání vykonávaných příkazů prostřednictvím USB je využita metoda \texttt{\_stack\_cmd} třídy \texttt{JtagController}, které jsou předávány jednotlivé bajty podle struktury příkazu uvedené tabulce \ref{tab:mpsse_cmd_format}. Takto odeslané příkazy se zapisují do bufferu FTDI převodníku. Vykonání příkazů obsažených v bufferu je spuštěno voláním metody \texttt{sync} třídy \texttt{JtagController}. Tímto je odstartována komunikace na \acs{JTAG} rozhraní a výstupní buffer je vyprázdněn. V případě, že některý z vykonaných příkazů realizoval čtení z \texttt{\acs{TDO}} pinu jsou vyčtená data uložena do vstupního bufferu. \cite{PyFtdi} \cite{PyFtdi_doc}
 
 \subsection{Čtení dat z bufferu FTDI převodníku}
-Vyčtení dat přijatých na \texttt{\acs{TDO}} pinu je provedeno voláním metody \texttt{\_read\_from\_buffer} třídy \texttt{JtagController}. Parametrem funkce je počet bitů, které mají být vyčteny. Do vstupního bufferu jsou data zapisována po bajtech za základě vykonání jednotlivých příkazů, a to i případě příkazu    \cite{PyFtdi_doc}
+Vyčtení dat přijatých na \texttt{\acs{TDO}} pinu je provedeno voláním metody \texttt{read\_from\_buffer} třídy \texttt{JtagController}. Parametrem funkce je počet bitů, které mají být vyčteny. Do vstupního bufferu jsou data zapisována po bajtech na základě vykonání jednotlivých příkazů, a to i v případě příkazu přijímání dat po bitech. \cite{PyFtdi} \cite{PyFtdi_doc}
+
+Uvedený příklad demonstruje správné vyčtení z bufferu:
+\begin{enumerate}[leftmargin = 2cm]
+	\item Zápis příkazu: \textit{cmd} = \texttt{0x2A}, \textit{length} = 4 (čtení po bitech)
+	\item Zápis příkazu: \textit{cmd} = \texttt{0x28}, \textit{length} = 2 (čtení po bajtech)
+	\item Zápis příkazu: \textit{cmd} = \texttt{0x2A}, \textit{length} = 2 (čtení po bitech)
+	\item Volání \texttt{data = read\_from\_buffer(35)}
+	\item Správné seřazení jednotlivých bitů
+\end{enumerate}
+
+Přestože příkazy v bodech 1 až 3 vyčtou z \texttt{\acs{TDO}} pinu 32 bitů (4 bajty) je zapotřebí přečíst ze vstupního bufferu 35 až 40 bitů (5 bajtů), protože každý příkaz vyčte minimálně jeden bajt. První příkaz realizuje čtení 5ti bitů, které se uloží do vstupního bufferu jako bajt, přičemž čtená data jsou řazena od \acs{MSB}. Druhý příkaz vyčte 3 bajty a uloží je do bufferu. Třetí příkaz vyčte 3 bity a uloží je do dalšího bajtu bufferu a data jsou řazena od \acs{MSB}. V případě, že funkce v bodě 4 má vrátit 35 bitů jsou 3 bity vyčtené třetím příkazem funkcí správně zařazeny na 3 \acs{MSB} návratové hodnoty. V tomto příkladě stačí pro správný výsledek (32-bitové číslo) pouze vynechat 3 \acs{LSB} návratové hodnoty funkce. Za použití tohoto přístupu byly vyčteny všechny bajty ze vstupního bufferu a nemůže tak při dalším čtení dojít k vyčtení neplatných dat.
+
+\subsection{Realizace volby vhodné délky přenášených dat}
+Z programu vykonávaného za pomoci testovacího softwaru v PC je možné přistupovat k celým registrům nebo jejich částem pomocí operátoru přiřazení, např.: \texttt{SPI0.Control = 5} nebo v případě přístupu k části registru \texttt{SPI0.Control\_f.mode = 3}. Pro čtení lze použít obdobný zápis opačně. V případě přístupu k celému registru je automaticky zvolena délka přenášených dat celého 32-bitového slova.
+
+Pokud jde o přístup k bitovému poli registru je informace o pozici a délce bitového pole získána z \acs{SVD} (\textit{\acl{SVD}}) souboru. Podle této délky a pozice realizované SW rozšíření určí pozici počátečního a koncového bitu v registru. Podle pozic těchto bitů je určena optimální délka dat přenášených přes \acs{JTAG} rozhraní. Možné hraniční případy variant bitových polí a zvolená délka přenosu jsou naznačeny na obrázku \ref{fig:bit_fields}. V případě, že bitové pole se nachází na rozhraní 15 a 16 bitu v registru, musí být pro přenos zvolena délka celého registru (\textit{Word}) i přesto, že délka bitového pole je menší než 16 bitů (\textit{Half-Word}). Tato vlastnost vychází z toho, že systémová sběrnice nepodporuje nezarovnaný přístup k bitům 8 až 23. Pokud je požadován přístup k bitovému poli na rozhraní 8 a 7 nebo 23 a 24 bitu, je zvolen přenos 16 bitů (\textit{Half-Word}) pokud bitové pole nepřesahuje tuto délku. \cite{ri5cy}
+
+\begin{figure}[H]
+  \begin{center}
+    \includegraphics[scale=0.72]{obrazky/bit_fields.pdf}
+  \end{center}
+  \caption{Možné varianty délky přenášených dat podle bitového pole}
+	\label{fig:bit_fields}
+\end{figure}
+
+\subsubsection{Zápis do bitového pole}
+Zápisem do bitového pole nesmí být přepsána hodnota ostatních bitů registru dle zvolené délku přenášených dat. Z tohoto důvodu je nejdříve provedeno čtení a jsou přepsány pouze bity daného bitového pole. Výsledná hodnota je zapsána zpět do registru. Další optimalizací je vynechání čtení pokud bitové pole odpovídá některému z možných přístupů na systémovou sběrnici, viz. řádky 1, 3 a 5 v obrázku \ref{fig:bit_fields}. 
+
+
+%\begin{table}[!h]
+%  \caption{Formát příkazů \acs{MPSSE} \cite{MPSSE_cmd}}
+%  \begin{center}
+%  	\small
+%	  \begin{tabular}{!{\vrule width 1.2pt}M{0.2cm}|M{0.2cm}M{0.2cm}M{0.2cm}M{0.2cm}M{0.2cm}M{0.2cm}|M{0.2cm}:M{0.2cm}|M{0.2cm}M{0.2cm}M{0.2cm}M{0.2cm}M{0.2cm}M{0.2cm}|M{0.2cm}:M{0.2cm}|M{0.2cm}M{0.2cm}M{0.2cm}M{0.2cm}M{0.2cm}M{0.2cm}|M{0.2cm}:M{0.2cm}|M{0.2cm}M{0.2cm}M{0.2cm}M{0.2cm}M{0.2cm}M{0.2cm}|M{0.2cm}!{\vrule width 1.2pt}}
+%	    \noalign{\hrule height 1.2pt}
+%	    31 & & & & & & & 24 & 23 & & & & & & & 16 & 15 & & & & & & & 8 & 7 & & & & & & & 0\\
+%	    \noalign{\hrule height 1.2pt}
+%			\multicolumn{32}{|c|}{word}\\
+%			\hline
+%		
+%			%\multicolumn{7}{M{0.25cm}}{} & & \multicolumn{7}{c|}{} & \multicolumn{2}{|c|}{word} & \multicolumn{6}{|c}{} & & \multicolumn{7}{c}{}\\
+%			%\hline
+%			%\multicolumn{16}{|M{4cm}|}{half-word} & \multicolumn{16}{|M{4cm}|}{half-word}\\
+%			%\hline
+%			%\multicolumn{6}{M{1.5cm}|}{} & \multicolumn{2}{|M{0.5cm}|}{half-word} & \multicolumn{6}{|M{1.5cm}}{} & & \multicolumn{7}{M{1.75cm}|}{} & & \multicolumn{2}{|M{0.5cm}|}{half-word} & \multicolumn{6}{|M{1.5cm}}{}\\
+%		\end{tabular}
+%  \end{center}
+%	\label{tab:bit_fields}
+%\end{table}
+%Každá část registru nese informaci

@@ -59,8 +59,11 @@
 \contentsline {subsection}{\numberline {4.2.1}Příkazy víceúčelového sériového generátoru \acs {MPSSE}}{54}{subsection.148}%
 \contentsline {subsubsection}{Formát příkazu \acs {MPSSE}}{55}{section*.151}%
 \contentsline {section}{\numberline {4.3}Návrh funkcí pro komunikaci pomocí optimalizovaného protokolu}{55}{section.154}%
-\contentsline {subsection}{\numberline {4.3.1}Zápis příkazů pro \acs {MPSSE} do bufferu}{55}{subsection.155}%
-\contentsline {chapter}{Závěr}{57}{section*.157}%
-\contentsline {chapter}{Literatura}{58}{section*.159}%
-\contentsline {chapter}{Seznam symbol\r {u} a zkratek}{60}{section*.161}%
-\contentsline {chapter}{Seznam p\v {r}\'{\i }loh}{61}{section*.163}%
+\contentsline {subsection}{\numberline {4.3.1}Zápis příkazů pro \acs {MPSSE} do bufferu FTDI převodníku}{55}{subsection.155}%
+\contentsline {subsection}{\numberline {4.3.2}Čtení dat z bufferu FTDI převodníku}{56}{subsection.156}%
+\contentsline {subsection}{\numberline {4.3.3}Realizace volby vhodné délky přenášených dat}{56}{subsection.162}%
+\contentsline {subsubsection}{Zápis do bitového pole}{57}{section*.165}%
+\contentsline {chapter}{Závěr}{58}{section*.167}%
+\contentsline {chapter}{Literatura}{59}{section*.169}%
+\contentsline {chapter}{Seznam symbol\r {u} a zkratek}{61}{section*.171}%
+\contentsline {chapter}{Seznam p\v {r}\'{\i }loh}{63}{section*.173}%
